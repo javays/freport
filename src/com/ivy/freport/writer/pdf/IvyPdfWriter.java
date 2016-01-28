@@ -4,39 +4,41 @@
 
 package com.ivy.freport.writer.pdf;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.Attributes;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.ivy.freport.ds.IvyDataSource;
-import com.ivy.freport.ds.IvyXmlDataSource;
-import com.ivy.freport.layout.Row;
-import com.ivy.freport.layout.Table;
-import com.ivy.freport.writer.xls.BillParams;
-import com.ivy.freport.writer.xls.XmlDSListener;
-import com.ivy.freport.writer.xls.XmlDSParser;
+import com.ivy.freport.layout.DataType;
+import com.ivy.freport.layout.IvyCellDesc;
+import com.ivy.freport.layout.IvyDocDesc;
+import com.ivy.freport.layout.IvyRowDesc;
+import com.ivy.freport.layout.IvyTableDesc;
+import com.ivy.freport.utils.StringUtils;
+import com.ivy.freport.utils.TmplParser;
+import com.ivy.freport.writer.xls.IvyDSAccessListener;
+
 
 /**
  * 描述：
@@ -51,38 +53,58 @@ import com.ivy.freport.writer.xls.XmlDSParser;
  * @since 
  */
 
-public class IvyPdfWriter implements XmlDSListener {
+public abstract class IvyPdfWriter<E> extends PdfPageEventHelper implements IvyDSAccessListener<E> {
     
     private static final Logger logger = Logger.getLogger(IvyPdfWriter.class);
     
-    private static final int MAX_FLUSH_ROW_NUM = 10000;
+    protected static final int MAX_FLUSH_ROW_NUM = 10000;
     
-    private Document document;
-    private PdfWriter pdfWriter;
-    private PdfPTable curTable;
-    private Map<String, Table> layout;
+    private IvyDocDesc ivyDocDesc; 
+    private Map<String, IvyDataSource<E>> dataSources;
+    private Map<String, Object> otherAttrs;
+    private String output;
     
-    private Row row;
+    protected Document document;
+    protected PdfWriter pdfWriter;
+    protected PdfPTable curTable;
     
-    private int count;
+    protected IvyRowDesc ivyRowDesc;
+    
+    /**
+     * @param ivyDocDesc
+     * @param dataSources
+     * @param otherAttrs
+     * @param output
+     */
+    public IvyPdfWriter(IvyDocDesc ivyDocDesc,
+            Map<String, IvyDataSource<E>> dataSources,
+            Map<String, Object> otherAttrs, String output) {
+        super();
+        this.ivyDocDesc = ivyDocDesc;
+        this.dataSources = dataSources;
+        this.otherAttrs = otherAttrs;
+        this.output = output;
+    }
+
+    @Override
+    public void onEndPage(PdfWriter writer, Document document) {
+        Rectangle rect = writer.getBoxSize("rect");
+        
+        Phrase phrase = PdfParagraph.changeChinese("第 "+ writer.getPageNumber() +" 页.", 9, false);
+        ColumnText.showTextAligned(writer.getDirectContent(),
+                                Element.ALIGN_CENTER,
+                                phrase,
+                                (rect.getLeft() + rect.getRight()) / 2,
+                                rect.getBottom() - 45,
+                                0);
+    }
     
     /**
      * 创建PDF账单
      */
-    public boolean create(String tmpl) {
-        
-        IvyXmlDataSource ivyXmlDataSource = new IvyXmlDataSource((List)null, t -> {
-            t.getIndex("");
-            document.get
-        }, null);
-        
-        String tmpl = (String) billParams.get(BillParams.PARAM_TMPL);
-        layout = BillLayout.getInstance().billLayouts.get(tmpl);
-        String output = (String) billParams.get(BillParams.PARAM_OUTPUT);
-        
+    public boolean create() {
 //        Rectangle rectPageSize = new Rectangle(PageSize.A4);   // 定义A4页面大小
-//        document = new Document(rectPageSize, 5, 5, 15, 15);// 其余4个参数，设置了页面的4个边距
-        document = new Document(PageSize.A4, 5, 5, 15, 25);
+        document = new Document(PageSize.A4, 5, 5, 15, 25);      // 其余4个参数，设置了页面的4个边距
         Rectangle rect = new Rectangle(36, 54, 559, 788);
         try {
             FileOutputStream fos = new FileOutputStream(output);
@@ -94,8 +116,7 @@ public class IvyPdfWriter implements XmlDSListener {
             document.addKeywords("账单");
             
             pdfWriter.setBoxSize("rect", rect);   
-            HeaderFooter header = new HeaderFooter();   
-            pdfWriter.setPageEvent(header);  
+            pdfWriter.setPageEvent(this);  
 //            Phrase beforePhrase = PdfParagraph.changeChinese("第 ", 10, false);
 //            Phrase afterPhrase = PdfParagraph.changeChinese(" 页.", 10, false);
 //            HeaderFooter footer = new HeaderFooter(beforePhrase, afterPhrase);
@@ -141,66 +162,69 @@ public class IvyPdfWriter implements XmlDSListener {
      * @throws MalformedURLException 
      * @throws DocumentException 
      */
-    @SuppressWarnings("unchecked")
     private void createTables() throws MalformedURLException, 
                                     IOException, 
                                     DocumentException {
-        Iterator<Table> iterator = layout.values().iterator();
+        
+        List<IvyTableDesc> ivyTableDescs = ivyDocDesc.getIvyTableDescs();
+        Iterator<IvyTableDesc> iterator = ivyTableDescs.iterator();
         while (iterator.hasNext()) {
-            Table table = iterator.next();
-            if (table.getShow() != null && !PdfTmplParser.validate(table.getShow(), billParams)) {
+            IvyTableDesc table = iterator.next();
+            
+            List<IvyRowDesc> rowDescs = table.getIvyRowDescs();
+            if (rowDescs == null || rowDescs.isEmpty()) {
                 continue;
             }
             
-            List<Row> rows = table.getRows();
-            if (rows == null || rows.isEmpty()) {
+            if (table.getShow() != null 
+                    && !TmplParser.validate(table.getShow(), otherAttrs)) {
                 continue;
             }
             
-            int column = 0;
-            int maxCellRow = 0;
-            for (int i = 0; i < rows.size(); i++) {
-                Row row = rows.get(i);
-                if (row.getCells().size() > column) {
-                    column = row.getCells().size();
-                    maxCellRow = i;
+            int columnNum = 0;    //列数
+            int maxCellNumRowIndex = 0;    //最大列数行
+            for (int i = 0; i < rowDescs.size(); i++) {
+                IvyRowDesc ivyRowDesc = rowDescs.get(i);
+                int rowCellSize = ivyRowDesc.getIvyCellDescs().size();
+                if (rowCellSize > columnNum) {
+                    columnNum = rowCellSize;
+                    maxCellNumRowIndex = i;
                 }
             }
             
-            int[] widths = new int[column];
-            curTable = new PdfPTable(column);
+            int[] widths = new int[columnNum];
+            curTable = new PdfPTable(columnNum);
             curTable.setComplete(false);
             curTable.setWidthPercentage(table.getWidth());
             curTable.setHorizontalAlignment(table.getAlign());
             
-            for (int i = 0; i < rows.size(); i++) {
-                Row row = rows.get(i);
-                if (row.getShow() != null && !PdfTmplParser.validate(row.getShow(), billParams)) {
+            for (int i = 0; i < rowDescs.size(); i++) {
+                IvyRowDesc row = rowDescs.get(i);
+                if (row.getShow() != null 
+                        && !TmplParser.validate(row.getShow(), otherAttrs)) {
                     continue;
                 }
                 
-                List<Cell> billCells = row.getCells();
-                if (i == maxCellRow) {
-                    for (int j = 0; j < billCells.size(); j++) {
-                        Cell billCell = billCells.get(j);
+                List<IvyCellDesc> ivyCellDescs = row.getIvyCellDescs();
+                if (i == maxCellNumRowIndex) {
+                    for (int j = 0; j < ivyCellDescs.size(); j++) {
+                        IvyCellDesc billCell = ivyCellDescs.get(j);
                         widths[j] = billCell.getWidth();
                     }
                 }
                 
-                if (row.getDs() != null && !row.getDs().equals("")) {
-                    this.row = row;
-                    count = 0;
-                    List<File> xmlFiles = (List<File>) billParams.get(row.getDs());
-                    XmlDSParser xmlDSParser = new XmlDSParser(xmlFiles);
-                    xmlDSParser.addListener(this);
-                    xmlDSParser.parse();
+                if (!StringUtils.isEmpty(row.getDs())) {
+                    this.ivyRowDesc = row;
+                    IvyDataSource<E> ivyDataSource = dataSources.get(row.getDs());
+                    ivyDataSource.addListener(this);
+                    ivyDataSource.next();
                     continue;
                 }
                 
-                for (Cell billCell : billCells) {
-                    PdfPCell cell = createCell(billCell);
-                    if (billCell.getColspan() != 0) {
-                        cell.setColspan(billCell.getColspan());
+                for (IvyCellDesc ivyCellDesc : ivyCellDescs) {
+                    PdfPCell cell = createCell(ivyCellDesc);
+                    if (ivyCellDesc.getColspan() != 0) {
+                        cell.setColspan(ivyCellDesc.getColspan());
                     }
                     curTable.addCell(cell);
                 }
@@ -225,29 +249,30 @@ public class IvyPdfWriter implements XmlDSListener {
      * @throws MalformedURLException
      * @throws IOException
      */
-    private PdfPCell createCell(Cell billCell) throws BadElementException,
-            MalformedURLException,
-            IOException {
+    private PdfPCell createCell(IvyCellDesc cellDesc) 
+            throws BadElementException,
+                MalformedURLException,
+                IOException {
         
-        boolean img = billCell.isImg();
-        String cellValue = billCell.getValue();
+        boolean img = cellDesc.isImg();
+        String cellValue = cellDesc.getValue();
         
         PdfPCell cell = null;
         if (img) {
-            Image image = Image.getInstance(billCell.getPicBuffer());
-            image.scaleAbsolute(billCell.getImgWidth(), billCell.getImgHeight());
+            Image image = Image.getInstance(cellDesc.getPicBuffer());
+            image.scaleAbsolute(cellDesc.getImgWidth(), cellDesc.getImgHeight());
             cell = new PdfPCell(image);
         } else {
             Object value = null;
-            if (billCell.isHasParam()) {   //替换参数
-                value = PdfTmplParser.fillParams(cellValue, billParams);
+            if (cellDesc.isHasParam()) {   //替换参数
+                value = TmplParser.fillParams(cellValue, otherAttrs);
                 value = value == null ? "" : value;
             } 
             
             if (value != null) {
-                if (EnumDataType.NUMBER == billCell.getDataType() 
+                if (DataType.NUMBER == cellDesc.getDataType() 
                     && value instanceof Number) {
-                    String pattern = billCell.getPattern();
+                    String pattern = cellDesc.getPattern();
                     DecimalFormat df = new DecimalFormat(pattern);  
                     cellValue = df.format(value);
                 } else {
@@ -261,26 +286,26 @@ public class IvyPdfWriter implements XmlDSListener {
                 cellValue = String.join("\n", tmp);
             }
             
-            PdfParagraph paragraph = new PdfParagraph(cellValue, billCell.getSize(), billCell.isBold());
+            PdfParagraph paragraph = new PdfParagraph(cellValue, cellDesc.getSize(), cellDesc.isBold());
             cell = new PdfPCell(paragraph);
         }
         
-        cell.setHorizontalAlignment(billCell.getAlign());
-        cell.setVerticalAlignment(billCell.getValign());
+        cell.setHorizontalAlignment(cellDesc.getAlign());
+        cell.setVerticalAlignment(cellDesc.getValign());
         
-        String bgColor = billCell.getBackgroundColor();
+        String bgColor = cellDesc.getBgColor();
         BaseColor baseColor = new BaseColor(Integer.valueOf(bgColor.substring( 1, 3 ), 16 ),
         Integer.valueOf(bgColor.substring( 3, 5 ), 16 ),
         Integer.valueOf(bgColor.substring( 5, 7 ), 16 ));
         cell.setBackgroundColor(baseColor);
         
-        String borderColor = billCell.getBorderColor();
+        String borderColor = cellDesc.getBorderColor();
         BaseColor bdColor = new BaseColor(Integer.valueOf(borderColor.substring( 1, 3 ), 16 ),
                 Integer.valueOf(borderColor.substring( 3, 5 ), 16 ),
                 Integer.valueOf(borderColor.substring( 5, 7 ), 16 ));
                 cell.setBackgroundColor(baseColor);
         cell.setBorderColor(bdColor);
-        cell.setFixedHeight(billCell.getHeight());
+        cell.setFixedHeight(cellDesc.getHeight());
         cell.setPadding(0);
         
         return cell;
@@ -291,62 +316,8 @@ public class IvyPdfWriter implements XmlDSListener {
         document.add(paragraph);
     }
     
-    /* (non-Javadoc)
-     * @see com.sf.ecbil.bill.xls.XmlDSListener#readNextElement(int, java.lang.String, org.xml.sax.Attributes)
-     */
-    @Override
-    public boolean readNextElement(int fileSeq,
-                            String qName,
-                            Attributes attributes) {
-        
-        for (Cell billCell : row.getCells()) {
-            String value = attributes.getValue(billCell.getValue());
-            if (EnumDataType.NUMBER == billCell.getDataType() 
-                    && FileUtils.isNum(value)) {
-                int scale = 0;
-                String pattern = billCell.getPattern();
-                int lastDot = pattern.lastIndexOf(".");
-                if (lastDot != -1) {
-                    scale = pattern.length() - lastDot - 1;
-                }
-                
-                BigDecimal bigDecimal = new BigDecimal(value);
-                value = bigDecimal.setScale(scale, BigDecimal.ROUND_HALF_UP).toString();
-            }
-            
-            PdfParagraph paragraph = new PdfParagraph(value, billCell.getSize(), billCell.isBold());
-            
-            PdfPCell cell = new PdfPCell(paragraph);
-            cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
-            cell.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
-            cell.setBorderColor(BaseColor.BLACK);
-            
-            curTable.addCell(cell);
-        }
-        
-        try {
-            count ++;
-            if (count % MAX_FLUSH_ROW_NUM == 0) {
-                document.add(curTable);
-                logger.info("flush pdf data to disk");
-                pdfWriter.flush();
-            }
-        } catch (DocumentException e) {
-            logger.error("", e);
-            e.printStackTrace();
-        }
-        
-        return true;
-    }
-
-    public static String getChinese(String s) {
-        try {
-           return new String(s.getBytes("gb2312"), "iso-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("", e);
-            return s;
-        }
-    }
+    public abstract boolean nextElement(E e);
+    
     
     /**
      * 关闭文件

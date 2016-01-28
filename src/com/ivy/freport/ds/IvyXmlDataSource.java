@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -20,7 +19,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.ivy.freport.utils.StringUtils;
-import com.ivy.freport.writer.pdf.IvyXmlAttrConsumer;
+import com.ivy.freport.writer.xls.IvyDSAccessListener;
 
 /**
  * 描述：
@@ -51,36 +50,28 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
     
     public final Logger logger = Logger.getLogger(IvyXmlDataSource.class);
     
-    private Consumer<Attributes> consumer;
-
     private List<File> xmlFiles;
     private List<String> skipElementsName;
+    private List<IvyDSAccessListener<Attributes>> listeners;
     
     private String curXmlFile;
-    
-    private int curRow = 0;
     
     /**
      * @param xmlFiles
      * @param skipElementsName
      */
-    public IvyXmlDataSource(List<File> xmlFiles, Consumer<Attributes> consumer, List<String> skipElementsName) {
+    public IvyXmlDataSource(List<File> xmlFiles, List<String> skipElementsName) {
         super();
         this.xmlFiles = xmlFiles;
-        this.consumer = consumer;
         this.skipElementsName = skipElementsName;
-        
-        if (consumer == null) {
-            consumer = new IvyXmlAttrConsumer();
-        }
     }
     
     /**
      * @param xmlFile
      * @param skipElementsName
      */
-    public IvyXmlDataSource(File xmlFile, Consumer<Attributes> consumer, List<String> skipElementsName) {
-        this((List<File>)null, consumer, skipElementsName);
+    public IvyXmlDataSource(File xmlFile, List<String> skipElementsName) {
+        this((List<File>)null, skipElementsName);
         xmlFiles = new ArrayList<File>(1);
         xmlFiles.add(xmlFile);
     }
@@ -104,6 +95,15 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
         }
         
         return false;
+    }
+    
+    public void addListener(IvyDSAccessListener<Attributes> listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<IvyDSAccessListener<Attributes>>();
+        }
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
     
     
@@ -131,9 +131,7 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
                 return;
             }
             
-            consumer.accept(attributes);
-            curRow ++;
-            
+            onNextItem(attributes);
             super.startElement(uri, localName, qName, attributes);
         }
 
@@ -148,14 +146,6 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
         }
     }
     
-    /* (non-Javadoc)
-     * @see com.ivy.freport.ds.IvyDataSource#curRow()
-     */
-    @Override
-    public int curRow() {
-        return curRow;
-    }
-
     /* (non-Javadoc)
      * @see com.ivy.freport.ds.IvyDataSource#hasNext()
      */
@@ -203,6 +193,18 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
         } catch (IOException e) {
             logger.error("", e);
             e.printStackTrace();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see com.ivy.freport.ds.IvyDataSource#onNextItem()
+     */
+    @Override
+    public void onNextItem(Attributes attributes) {
+        if (listeners != null) {
+            for (IvyDSAccessListener<Attributes> ivyDSAccessListener : listeners) {
+                ivyDSAccessListener.nextElement(attributes);
+            }
         }
     }
 }

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class Layout {
     public static final String BILL_LAYOUT_ROOT = "META-INF/config/ecbil.bill/tmpl/";
     
     private static Layout layout = new Layout();
-    public Map<String, Map<String, Table>> layouts = new HashMap<String, Map<String,Table>>();
+    public Map<String, IvyDocDesc> docDescs = new HashMap<String, IvyDocDesc>();
     
     private int[] rowspans = null;
     
@@ -67,8 +66,8 @@ public class Layout {
                 "META-INF/config/ecbil.bill/tmpl/tmpl_pdf_bill_sto_layout.xml",
                 "META-INF/config/ecbil.bill/tmpl/tmpl_xls_bill_standard_layout.xml"
                 };*/
-        
-        File tmplRoot = new File(FileUtils.getFilePath(BILL_LAYOUT_ROOT));
+        String path = Thread.currentThread().getContextClassLoader().getResource("com/resources").getPath();
+        File tmplRoot = new File(path);
         if (!tmplRoot.exists()) {
             throw new RuntimeException("bill layout tmpl path "+ BILL_LAYOUT_ROOT +" may moved away!!!");
         }
@@ -95,13 +94,15 @@ public class Layout {
                 document = saxReader.read(is);
                 Element root = document.getRootElement();
 
-                Map<String, Table> layouts = new LinkedHashMap<String, Table>();
+                IvyDocDesc ivyDocDesc = new IvyDocDesc();
+                
                 String name = root.attributeValue("name");
-                layouts.put(name, layouts);
+                ivyDocDesc.setName(name);
+                docDescs.put(name, ivyDocDesc);
 
                 Iterator<Element> rootIter = root.elementIterator();
                 while (rootIter.hasNext()) {
-                    Table table = new Table();
+                    IvyTableDesc table = new IvyTableDesc();
 
                     Element tableNode = rootIter.next();
                     table.setId(tableNode.attributeValue("id"));
@@ -130,7 +131,7 @@ public class Layout {
 
                     List<Element> rowNodes = tableNode.elements("row");
                     for (Element rowNode : rowNodes) {
-                        Row billRow = new Row();
+                        IvyRowDesc billRow = new IvyRowDesc();
                         
                         String _name = rowNode.attributeValue("name");
                         if (!StringUtils.isEmpty(_name)) {
@@ -157,12 +158,12 @@ public class Layout {
                             billRow.setDs(ds);
                         }
                         
-                        billRow.setCells(getCellLayouts(rowNode));
+                        billRow.setIvyCellDescs(getCellLayouts(rowNode));
                         
-                        table.addRow(billRow);
+                        table.addRowDesc(billRow);
                     }
                     
-                    layouts.put(table.getId(), table);
+                    ivyDocDesc.addTableDesc(table);
                 }
 
                 is.close();
@@ -178,22 +179,22 @@ public class Layout {
     }
     
     @SuppressWarnings("unchecked")
-    private List<Cell> getCellLayouts(Element parentElement) throws IOException {
+    private List<IvyCellDesc> getCellLayouts(Element parentElement) throws IOException {
         if (parentElement == null) {
             return null;
         }
         
         List<Element> cellElements = parentElement.elements("cell");
-        List<Cell> result = new ArrayList<Cell>(cellElements.size());
+        List<IvyCellDesc> result = new ArrayList<IvyCellDesc>(cellElements.size());
         
         boolean b_rowspan = false;
         for (int i = 0; i < cellElements.size(); i++) {
             Element element = cellElements.get(i);
             
-            Cell billCell = new Cell();
+            IvyCellDesc billCell = new IvyCellDesc();
             
             if (i > 0) {
-                Cell _billCell = result.get(i-1);
+                IvyCellDesc _billCell = result.get(i-1);
                 int lastColSpan = _billCell.getColspan();
                 if (lastColSpan > 1) {
                     billCell.setCellId(_billCell.getCellId() + _billCell.getColspan());
@@ -219,7 +220,7 @@ public class Layout {
                     }
                 } else {
                     if (i > 0) {
-                        Cell preCell = result.get(i-1);
+                        IvyCellDesc preCell = result.get(i-1);
                         billCell.setCellId(preCell.getCellId() + 1);
                     } else {
                         billCell.setCellId(0);
@@ -345,9 +346,9 @@ public class Layout {
         return result;
     }
     
-    private void fillRowSpans(List<Cell> billCells) {
+    private void fillRowSpans(List<IvyCellDesc> billCells) {
         int size = 0;
-        for (Cell billCell : billCells) {
+        for (IvyCellDesc billCell : billCells) {
             size += billCell.getColspan() == 0 ? 1 : billCell.getColspan();
         }
         
@@ -363,7 +364,7 @@ public class Layout {
         
         int rowspan_index = 0;
         for (int i = 0; i < billCells.size(); i++) {
-            Cell billCell = billCells.get(i);
+            IvyCellDesc billCell = billCells.get(i);
             
             int rowspan = billCell.getRowspan();
             int cospan = billCell.getColspan();
@@ -435,10 +436,9 @@ public class Layout {
     }
     
     public static Layout getInstance() {
-        if (Config.isDevEnv()) {
-            layout.layouts = new HashMap<String, Map<String,Table>>();
+//        if (Config.isDevEnv()) {
             Layout.reload();
-        }
+//        }
 
         return layout;
     }

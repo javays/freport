@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author Steven.Zhu
  * @since
  */
-public class Cell {
+public class IvyCellDesc {
 
     private int      cellId;
     private String   value;
@@ -203,7 +203,7 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "Cell [cellId=" + cellId
+        return "IvyCellDesc [cellId=" + cellId
                 + ", value="
                 + value
                 + ", dataType="

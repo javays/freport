@@ -4,7 +4,6 @@
 
 package com.ivy.freport.writer.xls;
 
-import org.xml.sax.Attributes;
 
 /**
  * 描述：
@@ -19,7 +18,7 @@ import org.xml.sax.Attributes;
  * @since 
  */
 
-public interface XmlDSListener {
+public interface IvyDSAccessListener<T> {
 
-    public boolean readNextElement(int fileSeq, String qName, Attributes attributes);
+    public boolean nextElement(T t);
 }

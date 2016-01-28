@@ -16,7 +16,7 @@ import java.util.List;
  * @author Steven.Zhu
  * @since
  */
-public class Row {
+public class IvyRowDesc {
     
     public static final String HEAD = "head";
 
@@ -24,7 +24,7 @@ public class Row {
     private short height = 18;
     private int maxline;
     private String ds;
-    private List<Cell> cells;
+    private List<IvyCellDesc> ivyCellDescs;
     private String show;
     
     public String getName() {
@@ -33,17 +33,17 @@ public class Row {
     public String getDs() {
         return ds;
     }
-    public List<Cell> getCells() {
-        return cells;
-    }
     public void setName(String name) {
         this.name = name;
     }
     public void setDs(String ds) {
         this.ds = ds;
     }
-    public void setCells(List<Cell> cells) {
-        this.cells = cells;
+    public List<IvyCellDesc> getIvyCellDescs() {
+        return ivyCellDescs;
+    }
+    public void setIvyCellDescs(List<IvyCellDesc> ivyCellDescs) {
+        this.ivyCellDescs = ivyCellDescs;
     }
     public int getMaxline() {
         return maxline;
@@ -66,7 +66,7 @@ public class Row {
     
     @Override
     public String toString() {
-        return "BillRow [name=" + name
+        return "IvyRowDesc [name=" + name
                 + ", height="
                 + height
                 + ", maxline="
@@ -74,7 +74,7 @@ public class Row {
                 + ", ds="
                 + ds
                 + ", cells="
-                + cells
+                + ivyCellDescs
                 + ", show="
                 + show
                 + "]";

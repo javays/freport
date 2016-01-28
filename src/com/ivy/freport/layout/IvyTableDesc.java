@@ -17,12 +17,12 @@ import java.util.List;
  * @author Steven.Zhu
  * @since
  */
-public class Table {
+public class IvyTableDesc {
 
     private String id;
     private int width = 100;
     private int align = Align.LEFT.getValue(); // 默认左对齐
-    private List<Row> rows;
+    private List<IvyRowDesc> ivyRowDescs;
     private boolean br;
     private String show;
 
@@ -50,19 +50,19 @@ public class Table {
         this.align = align;
     }
 
-    public List<Row> getRows() {
-        return rows;
+    public List<IvyRowDesc> getIvyRowDescs() {
+        return ivyRowDescs;
     }
 
-    public void setRows(List<Row> rows) {
-        this.rows = rows;
+    public void setIvyRowDescs(List<IvyRowDesc> ivyRowDescs) {
+        this.ivyRowDescs = ivyRowDescs;
     }
 
-    public void addRow(Row row) {
-        if (rows == null) {
-            rows = new ArrayList<Row>();
+    public void addRowDesc(IvyRowDesc ivyRowDesc) {
+        if (ivyRowDescs == null) {
+            ivyRowDescs = new ArrayList<IvyRowDesc>();
         }
-        rows.add(row);
+        ivyRowDescs.add(ivyRowDesc);
     }
 
     public boolean isBr() {

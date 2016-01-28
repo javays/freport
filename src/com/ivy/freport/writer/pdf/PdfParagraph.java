@@ -10,7 +10,6 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.BaseFont;
-import com.sf.ecbil.bill.util.FileUtils;
 
 public class PdfParagraph extends Paragraph {
     
@@ -22,7 +21,8 @@ public class PdfParagraph extends Paragraph {
     
     static{
         try {
-            String fontPath = FileUtils.getFilePath("META-INF/config/ecbil.bill/tmpl/simsun.ttc");
+//            String fontPath = FileUtils.getFilePath("META-INF/config/ecbil.bill/tmpl/simsun.ttc");
+            String fontPath = Thread.currentThread().getContextClassLoader().getResource("com/resources/simsun.ttc").getPath();
             bfChinese = BaseFont.createFont(fontPath + ",1",
                                         BaseFont.IDENTITY_H,
                                         BaseFont.EMBEDDED);
