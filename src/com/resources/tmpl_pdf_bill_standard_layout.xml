@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="tmpl_pdf_bill_standard">
+	<table id="title" width="100%">
+    	<row>
+            <cell size="14" borderColor="#ffffff" height="50" align="center">
+                <![CDATA[
+客  户  月  结  清  单									
+                ]]>
+            </cell>
+            
+        </row>  
+    </table>
+    
+    <table id="introduction" width="100%">
+    	<row>
+            <cell width="24" align="left" valign="top" size="9" height="190" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+尊敬的 ($F{billHead.customerName}), 您好!\n
+      $F{billHead.billStart} 至 $F{billHead.billEnd} 账单已产生，非常感谢您选择我司为您提供的服务，感谢您与\n
+我司的真诚合作！本月发生的费用汇总说明如下（明细清单附后）：\n
+      结算期间：$F{billHead.billStart} 至 $F{billHead.billEnd}\n										
+      本期金额：$F{billSubTotal.s_totalDueAmtCurPriod}\n										
+      上期未付金额：$F{billSubTotal.s_unpaidFee}	\n									
+      截止本月您累计应付金额：$F{billSubTotal.s_totalDueAmt}\n										
+      请您在收到本月账单后及时核对，如有疑问请及时与我司对账联系人员联系，以尽快确认；\n									
+如无异议，请及时确认账单并通知我司对账联系人员开票给您，并请您按我们合作协议约定\n
+的时间及时安排付款，以此作为我们双方诚信合作的基石。谢谢！										
+                ]]>
+            </cell>
+            <cell width="12" align="left" valign="top" size="9" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+客户名称：$F{billHead.pdfCustName}\n
+          $F{billHead.customerEnName}\n
+月结账号：$F{billHead.custCode}\n
+联 系 人：$F{billHead.contact}\n
+地    区：$F{billHead.deptCode}\n
+收 帐 员：$F{billHead.billingMembers}\n
+币    别：$F{billHead.currency}\n
+到 期 日：$F{billHead.dueDate}\n
+                ]]>
+            </cell>
+            
+        </row>  
+    </table>
+    
+    <table id="orders" width="100%" show="order_count>0">
+        <row>
+            <cell colspan="17" hasParam="true" borderColor="#ffffff" size="9"><![CDATA[
+附：$F{billHead.billStart} 至 $F{billHead.billEnd}费用明细清单
+                ]]></cell>
+        </row>
+        <row name="head">
+            <cell value="序号" width="7" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="日期" width="8" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="订单\n号码" width="14" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="运单\n号码" width="14" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="对方\n城市" width="8" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="对方公司名称" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="对方公司电话" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="产品\n名称" width="8" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="付款\n方式" width="8" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="重量\n(公斤)" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="应收\n费用" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="单票\n折扣" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="实收\n费用" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="经手人" width="9" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="收派员" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="退回原订单号" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+            <cell value="备注" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
+        </row>
+        <row ds="order">
+            <cell value="no" size="9"/>
+            <cell value="monthDate" size="9"/>
+            <cell value="orderNo" size="9"/>
+            <cell value="waybillNo" size="9"/>
+            <cell value="oppArea" size="9"/>
+            <cell value="oppCompany" size="9"/>
+            <cell value="oppPhone" size="9"/>
+            <cell value="productCode" size="9"/>
+            <cell value="payType" size="9"/>
+            <cell value="weightQty" size="9" dataType="number" pattern="0.00"/>
+            <cell value="feeAmt" size="9" dataType="number" pattern="0.00"/>
+            <cell value="rebateAmt" size="9" dataType="number" pattern="0.00"/>
+            <cell value="realAmt" size="9" dataType="number" pattern="0.00"/>
+            <cell value="handPerson" size="9"/>
+            <cell value="courier" size="9"/>
+            <cell value="returnWaybillNo" size="9"/>
+            <cell value="orderRemark" size="9"/>
+        </row>
+    </table>
+    
+    <table id="orderSubtotal" show="order_count>0">
+        <row>
+           <cell value="小  计" width="87" align="center" size="9"/>
+           <cell value="$F{billSubTotal.totalWeight}" width="10" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+           <cell value="$F{billSubTotal.totalFeeAmt}" width="10" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+           <cell value="$F{billSubTotal.totalRebateAmt}" width="10" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+           <cell value="$F{billSubTotal.subTotalDueAmt}" width="49" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+<!--            <cell value="" width="40"/> -->
+        </row>
+    </table>
+    
+    <table id="specialRebate" show="billSubTotal.specialRebate!=0">
+        <row>
+            <cell value="补充折扣" width="117" align="center" size="9"/>
+           	<cell value="$F{billSubTotal.specialRebate}" width="49" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+        </row>
+    </table>
+    
+    <table id="orderTotal" br="true" show="order_count>0">
+        <row>
+            <cell value="合  计" width="117" align="center" size="9"/>
+           	<cell value="$F{billSubTotal.totalDueAmtAfterSpecialRebate}" width="49" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+        </row>
+    </table>
+    
+    <!-- 促销折扣子报表 -->   
+    <table id="cx" width="70%" br="true" show="cx_count>0">
+        <row>
+            <cell colspan="3" align="center" valign="middle" height="30" size="9"><![CDATA[
+促销活动优惠费用
+                ]]></cell>
+        </row>
+        <row>
+            <cell value="方案名称" height="25" width="7" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="优惠费用" height="25" width="7" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="备注" height="25" width="12" bold="false" size="9" align="center" valign="middle"/>
+        </row>
+        <row ds="cx">
+            <cell value="discountType" size="9"/>
+            <cell value="discountAmount" size="9"/>
+            <cell value="remark" size="9"/>
+        </row>
+    </table>
+        
+    <!-- 理赔子报表 -->
+    <table id="cpts" width="70%" show="cpt_count>0">
+        <row>
+            <cell colspan="8" align="center" valign="middle" height="30" size="9"><![CDATA[
+减免订单费用及抵扣月结费用
+                ]]></cell>
+        </row>
+        <row>
+            <cell value="序号" height="25" width="7" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="抵减日" height="25" width="7" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="订单号码" height="25" width="12" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="运单号码" height="25" width="12" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="抵减费用" height="25" width="10" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="抵减增值\n服务费用" height="25" width="10" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="抵扣月结费用" height="25" width="10" bold="false" size="9" align="center" valign="middle"/>
+            <cell value="备注" height="25" width="7" bold="false" size="9" align="center" valign="middle"/>
+        </row>
+        <row ds="cpt">
+            <cell value="no" size="9"/>
+            <cell value="compensateDt" size="9"/>
+            <cell value="orderNo" size="9"/>
+            <cell value="waybillNo" size="9"/>
+            <cell value="offsetFreightAmt" size="9" dataType="number" pattern="0.00"/>
+            <cell value="offsetValueAddAmt" size="9" dataType="number" pattern="0.00"/>
+            <cell value="subtractMonthlyAmt" size="9" dataType="number" pattern="0.00"/>
+            <cell value="" size="9"/>
+        </row>
+    </table>
+ 
+	<table id="cptsSubTotal" width="70%" show="cpt_count>0">
+        <row>
+            <cell value="小  计" align="center" width="38" height="20" size="9"/>
+            <cell value="$F{billSubTotal.totalOffsetFreightAmt}" width="10" height="20" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+            <cell value="$F{billSubTotal.totalOffsetValueAddAmt}" width="10" height="20" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+            <cell value="$F{billSubTotal.totalSubtractMonthlyAmt}" width="17" height="20" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+        </row>
+    </table>
+       
+    <table id="cptsTotal" width="70%" br="true" show="cpt_count>0">
+        <row>
+            <cell value="减免抵扣合计" align="center" width="38" height="20" size="9"/>
+            <cell value="$F{billSubTotal.totalFeeFreight}" width="37" height="20" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+        </row>
+    </table>
+    
+    <table id="total" width="50%" br="true">
+        <row>
+            <cell value="本月应付费用金额" height="15" align="center" size="9"/>
+            <cell value="$F{billSubTotal.totalDueAmtCurPriod}" height="15" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+        </row>
+        <row>
+            <cell value="合  计" height="15" align="center" size="9"/>
+            <cell value="$F{billSubTotal.totalDueAmt}" height="15" hasParam="true" size="9" dataType="number" pattern="0.00"/>
+        </row>
+    </table>
+    
+    <table id="tips_head" width="100%">
+    	<row>
+            <cell align="left" valign="top" size="9" height="40" borderColor="#ffffff">
+                <![CDATA[
+温馨提示：																																					
+◆若您的账单地址、电邮地址等联系方式发生变化，为确保您能准确无误的收到账单，请您务必登陆我司MYSF，及时更新您的信息。																																								
+◆为了您的资金安全，希望您在付款时优先选择转账（网银、银行柜台等）、本票、支票、POS机刷卡等非现金支付方式结算费用。																																								
+◆我公司相关资料如下:																						
+                ]]>
+            </cell>
+        </row>  
+    </table>
+    
+    <table id="tips_body" width="70%" align="center">
+    	<row>
+            <cell  size="9" height="70" bold="true" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+公司名称：			$F{billBottom.companyName}																																					
+开户银行：			$F{billBottom.bankName}																																					
+银行账号：			$F{billBottom.bankAccount}																																					
+SF联系人：			$F{billBottom.linkMan}																																					
+联系电话：			$F{billBottom.telphone}																																					
+联系邮箱：			$F{billBottom.email}																																					
+传真号码：			$F{billBottom.faxNo}																																					
+                ]]>
+            </cell>
+            
+        </row>  
+    </table>
+    
+    <table id="tips_bottom" width="100%">
+    	<row>
+            <cell width="25" align="left" valign="top" size="9" height="30" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+◆请保留好订单资料，以便核对账单。																																								
+◆顺丰积分计划专为月结客户提供，登陆www.sf-express.com 或www.sf-jf.com指定兑换人，即可兑换心仪礼品。																																								
+◆使用电子对账，享轻松便捷，赢积分好礼，预知详情，请扫一扫以下二维码。																																								
+                ]]>
+            </cell>
+            
+        </row>  
+    </table>
+    
+    <table id="tips_bottom1" width="100%">
+    	<row>
+            <cell align="left" valign="top" height="120" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+………………………………………………………………………………………………………………………………………………………………………															
+    如需开通电子账单服务，请准确填写本附件资料，交由本司收派员带回，我司将在七个工作日内为您开通。成功开通后次																
+月起，我司将每月定期发送电子账单至贵司接收邮箱，不再提供纸质账单，请注意查收。																
+                    公司名称（全称）：_____________________________________________________________________________																
+                    月   结   账   号 ：___________________________________________________________________________																
+                    对  账  联 系 人 ：____________________________________________________________________________																
+                    对   账   电   话 ：___________________________________________________________________________																
+                    账 单 接 收 邮 箱 ：___________________________________________________________________________																
+    温馨提示：为方便我司能更好的为您服务，账单内容可能涉及您的商业机密，请在“账单接收邮箱”变更时及时知会我司，以
+便我司及时更新。“我的顺丰”(i.sf-express.com)为您推出“电子化对账”功能，可在线查看账单、下载图片、对账问题反馈，申请
+发票等。请登陆注册企业客户即可。详情请咨询“在线客服”或全国统一客服热线：95338。																
+                ]]>
+            </cell>
+            
+        </row>  
+    </table>
+    
+    <table id="qrcode" width="40%" align="center">
+    	<row>
+    	    <!-- heigh一定要大于imgHeight，否则显示不出来 -->
+            <cell value="com/resources/qrcode_vip.png" img="true" height="110" imgHeight="100" imgWidth="100" borderColor="#ffffff">
+            </cell>
+        </row>  
+    </table>
+    
+    
+    
+</layout>

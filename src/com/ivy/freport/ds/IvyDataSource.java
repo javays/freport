@@ -6,8 +6,6 @@ package com.ivy.freport.ds;
 
 import java.io.Closeable;
 
-import com.ivy.freport.writer.xls.IvyDSAccessListener;
-
 /**
  * 描述：
  * 
@@ -22,6 +20,8 @@ import com.ivy.freport.writer.xls.IvyDSAccessListener;
  */
 
 public interface IvyDataSource<T> extends Closeable {
+    
+    public int size();
 
     public boolean hasNext();
     public void next();

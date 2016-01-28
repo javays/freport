@@ -29,6 +29,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.ivy.freport.ds.IvyDSAccessListener;
 import com.ivy.freport.ds.IvyDataSource;
 import com.ivy.freport.layout.DataType;
 import com.ivy.freport.layout.IvyCellDesc;
@@ -37,7 +38,6 @@ import com.ivy.freport.layout.IvyRowDesc;
 import com.ivy.freport.layout.IvyTableDesc;
 import com.ivy.freport.utils.StringUtils;
 import com.ivy.freport.utils.TmplParser;
-import com.ivy.freport.writer.xls.IvyDSAccessListener;
 
 
 /**

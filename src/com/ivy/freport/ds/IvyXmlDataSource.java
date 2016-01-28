@@ -19,7 +19,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.ivy.freport.utils.StringUtils;
-import com.ivy.freport.writer.xls.IvyDSAccessListener;
 
 /**
  * 描述：
@@ -51,6 +50,7 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
     public final Logger logger = Logger.getLogger(IvyXmlDataSource.class);
     
     private List<File> xmlFiles;
+    private int size;
     private List<String> skipElementsName;
     private List<IvyDSAccessListener<Attributes>> listeners;
     
@@ -60,9 +60,10 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
      * @param xmlFiles
      * @param skipElementsName
      */
-    public IvyXmlDataSource(List<File> xmlFiles, List<String> skipElementsName) {
+    public IvyXmlDataSource(List<File> xmlFiles, int size, List<String> skipElementsName) {
         super();
         this.xmlFiles = xmlFiles;
+        this.size = size;
         this.skipElementsName = skipElementsName;
     }
     
@@ -70,8 +71,8 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
      * @param xmlFile
      * @param skipElementsName
      */
-    public IvyXmlDataSource(File xmlFile, List<String> skipElementsName) {
-        this((List<File>)null, skipElementsName);
+    public IvyXmlDataSource(File xmlFile, int size, List<String> skipElementsName) {
+        this((List<File>)null, size, skipElementsName);
         xmlFiles = new ArrayList<File>(1);
         xmlFiles.add(xmlFile);
     }
@@ -206,5 +207,13 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
                 ivyDSAccessListener.nextElement(attributes);
             }
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see com.ivy.freport.ds.IvyDataSource#getTotal()
+     */
+    @Override
+    public int size() {
+        return size;
     }
 }
