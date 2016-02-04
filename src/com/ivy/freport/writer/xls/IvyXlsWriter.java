@@ -8,9 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -31,6 +33,7 @@ import org.dom4j.DocumentException;
 import com.ivy.freport.ds.IvyDSAccessListener;
 import com.ivy.freport.ds.IvyDataSource;
 import com.ivy.freport.layout.Align;
+import com.ivy.freport.layout.Config;
 import com.ivy.freport.layout.DataType;
 import com.ivy.freport.layout.IvyCellDesc;
 import com.ivy.freport.layout.IvyDocDesc;
@@ -57,33 +60,26 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
     private final Logger logger = Logger.getLogger(IvyXlsWriter.class);
     
     public static final String PARAM_FILE_SEQ = "${file_seq}";
-    public static final int SHEET_MAX_ITEM_ROW = 50000;
-    public static final int WORKBOOK_SHEET_NUM = 2;
     
     private IvyDocDesc ivyDocDesc; 
     private Map<String, IvyDataSource<E>> dataSources;
     private Map<String, Object> otherAttrs;
     private String output;
     
-    private IvyTableDesc ivyTableDesc;
+    private int[] columnWidth;
+    private List<XlsRowDesc> headRows;      //表格行头，保存，分文件使用
+    private XlsRowDesc loopRow;
     
-    private List<IvyRowDesc> multiHeadRow;      //表格行头，保存，分文件使用
-    private List<List<HSSFCellStyle>> multiHeadRowStyles;
-    
-    private List<HSSFCellStyle> loopRowStyles;
-    
-    private int itemCount;        //订单记录数
-    private int curItemIndex = 0;     //当前订单索引
+    private int itemCount;        //数据源记录数
+    protected int curItemIndex = 0;     //当前数据源记录索引
     
     protected HSSFWorkbook workbook;   //POI工作表
     protected HSSFSheet sheet;         //POI工作表单
     protected int rowId;               //POI行ID
     
-    protected IvyRowDesc loopRowDesc;    //循环数据源，行定义
-    
     private int fileSeq = 1;         //输出文件序列
     
-    private Map<String, HSSFColor> colors = new HashMap<String, HSSFColor>();   //表单颜色
+    private Map<String, HSSFColor> xlsColorCache = new HashMap<String, HSSFColor>();   //表单颜色
     
     /**
      * @param ivyDocDesc
@@ -107,23 +103,42 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
      * @throws DocumentException
      */
     public boolean create() {
-        int lastIndex = output.lastIndexOf(".");
-        if (lastIndex == -1) {
-            output = output + "_" + PARAM_FILE_SEQ;
-        }else {
-            output = output.substring(0, lastIndex) + "_" 
-                    + PARAM_FILE_SEQ + output.substring(lastIndex);
+        if (ivyDocDesc == null) {
+            return true;
         }
         
-        ivyTableDesc = ivyDocDesc.getIvyTableDescs().get(0);
+        List<IvyTableDesc> ivyTableDescs = ivyDocDesc.getIvyTableDescs();
+        if (ivyTableDescs == null || ivyTableDescs.size() == 0) {
+            return true;
+        }
+        
+        if (output == null || output.trim().equals("")) {
+            output = UUID.randomUUID().toString() + ".xls";
+        }
+        
+        if (Config.isXls_split_file()) {    //分文件
+            int lastIndexDot = output.lastIndexOf(".");
+            if (lastIndexDot == -1) {
+                output = output + "_" + PARAM_FILE_SEQ;
+            }else {
+                output = output.substring(0, lastIndexDot) + "_" 
+                        + PARAM_FILE_SEQ + output.substring(lastIndexDot);
+            }
+        }
+        
+        cacheColumnWidth(ivyDocDesc.getIvyTableDescs().get(0).getIvyRowDescs().get(0));
         
         createWorkbook();
         createSheet();
         
-        List<IvyRowDesc> billRows = ivyTableDesc.getIvyRowDescs();
-        for (IvyRowDesc billRow : billRows) {
-            createRow(billRow);            
+        for (int i = 0; i < ivyTableDescs.size(); i++) {
+            IvyTableDesc ivyTableDesc = ivyTableDescs.get(i);
+            List<IvyRowDesc> billRows = ivyTableDesc.getIvyRowDescs();
+            for (IvyRowDesc billRow : billRows) {
+                createRow(billRow);            
+            }
         }
+        
         flush();
         
         return true;
@@ -134,20 +149,19 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
      */
     private void createWorkbook() {
         workbook = new HSSFWorkbook();
-        if (loopRowStyles != null) {
-            for (int i=0; i<loopRowStyles.size(); i++) {    //重新定义样式
-                HSSFCellStyle cellStyle = workbook.createCellStyle();
-                cellStyle.cloneStyleFrom(loopRowStyles.get(i));
-                loopRowStyles.set(i, cellStyle);
-            }
-        }
-        if (multiHeadRowStyles != null) {
-            for (List<HSSFCellStyle> headRowStyles : multiHeadRowStyles) {
-                for (int j=0; j<headRowStyles.size(); j++) {
-                    HSSFCellStyle cellStyle = workbook.createCellStyle();
-                    cellStyle.cloneStyleFrom(headRowStyles.get(j));
-                    headRowStyles.set(j, cellStyle);
+        
+        if (headRows != null) {
+            for (XlsRowDesc xlsRowDesc : headRows) {    //重新定义样式
+                List<HSSFCellStyle> hssfCellStyles = xlsRowDesc.getCellStyles();
+                if (hssfCellStyles != null && hssfCellStyles.size() > 0) {
+                    for (int i = 0; i < hssfCellStyles.size(); i++) {
+                        HSSFCellStyle cellStyle = workbook.createCellStyle();
+                        cellStyle.cloneStyleFrom(hssfCellStyles.get(i));
+                        hssfCellStyles.set(i, cellStyle);
+                        
+                    }
                 }
+                
             }
         }
     }
@@ -170,11 +184,20 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
         HSSFPrintSetup printSetup = sheet.getPrintSetup();    
         printSetup.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE); 
         
-        IvyRowDesc billRow = ivyTableDesc.getIvyRowDescs().get(0);
-        List<IvyCellDesc> billCells = billRow.getIvyCellDescs();
-        for (int i = 0; i < billCells.size(); i++) {
-            IvyCellDesc billCell = billCells.get(i);
-            sheet.setColumnWidth(i, billCell.getWidth() * 256);
+        for (int i = 0; i < columnWidth.length; i++) {
+            sheet.setColumnWidth(i, columnWidth[i]);
+        }
+    }
+    
+    private void cacheColumnWidth(IvyRowDesc ivyRowDesc) {
+        List<IvyCellDesc> ivyCellDescs = ivyRowDesc.getIvyCellDescs();
+        columnWidth = new int[ivyCellDescs.size()];
+        Arrays.fill(columnWidth, 10*256);
+        for (int j = 0; j < ivyCellDescs.size(); j++) {
+            int k = ivyCellDescs.get(j).getWidth();
+            if (k != 0) {
+                columnWidth[j] = k;
+            }
         }
     }
     
@@ -237,27 +260,23 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
         } else if(!StringUtils.isEmpty(rowDesc.getDs())){   //根据数据源循环多行显示
             createLoopRow(rowDesc);            
         } else {       //其他直接创建行显示
-            String rowName = rowDesc.getName();
-            List<HSSFCellStyle> headCellStyles = null;
-            if (IvyRowDesc.HEAD.equals(rowName)) {
-                addHeadRow(rowDesc);
-                headCellStyles = new ArrayList<HSSFCellStyle>();
-                addHeadRowCellStyles(headCellStyles);
-            }
-            
             HSSFRow hssfRow = null;
             if (rowId < sheet.getPhysicalNumberOfRows()) {
-                hssfRow = sheet.getRow(rowId);
+                hssfRow = sheet.getRow(rowId);    //跨行
             } else {
                 hssfRow = sheet.createRow(rowId);
             }
             hssfRow.setHeight((short)(rowDesc.getHeight()*20));
+            
+            XlsRowDesc xlsRowDesc = null;
+            if (IvyRowDesc.HEAD.equals(rowDesc.getName())) {   //表头
+                xlsRowDesc = addHeadRow(rowDesc);
+            }
+            
             for (int j = 0; j < billCells.size(); j++) {
                 IvyCellDesc billCell = billCells.get(j);
-                HSSFCellStyle cellStyle = createCellStyle(billCell);
-                if (IvyRowDesc.HEAD.equals(rowName)) {
-                    headCellStyles.add(j, cellStyle);
-                }
+                
+                HSSFCellStyle cellStyle = xlsRowDesc == null ? createCellStyle(billCell) : xlsRowDesc.getCellStyles().get(j);
                 
                 createCell(hssfRow, billCell, cellStyle, null);
                 if (billCell.getRowspan() > 1 || billCell.getColspan() > 1) {
@@ -353,25 +372,29 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
      * 为分多文件行头 保存表格行信息
      * @param billRow
      */
-    private void addHeadRow(IvyRowDesc rowDesc) {
-        if (rowDesc == null) {
-            return;
-        }
-        if (multiHeadRow == null) {
-            multiHeadRow = new ArrayList<IvyRowDesc>();
-        }
-        multiHeadRow.add(rowDesc);
+    private XlsRowDesc addHeadRow(IvyRowDesc rowDesc) {
+        return addHeadRow(rowDesc, null);
     }
     
     /**
      * 为分多文件行头 保存表格行样式
      * @param hssfCellStyles
      */
-    private void addHeadRowCellStyles(List<HSSFCellStyle> hssfCellStyles) {
-        if (this.multiHeadRowStyles == null) {
-            this.multiHeadRowStyles = new ArrayList<List<HSSFCellStyle>>();
+    private XlsRowDesc addHeadRow(IvyRowDesc rowDesc, List<HSSFCellStyle> cellStyles) {
+        if (rowDesc != null) {
+            if (headRows == null) {
+                headRows = new ArrayList<XlsRowDesc>();
+            }
+            
+            if (cellStyles == null) {
+                cellStyles = createCellStyles(rowDesc.getIvyCellDescs());
+            }
+            
+            XlsRowDesc xlsRowDesc = new XlsRowDesc(rowDesc, cellStyles);
+            headRows.add(xlsRowDesc);
+            return xlsRowDesc;
         }
-        this.multiHeadRowStyles.add(hssfCellStyles);
+        return null;
     }
     
     /**
@@ -386,22 +409,15 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
             return;
         }
         
-        this.loopRowDesc = loopRowDesc;
-        
-        List<IvyCellDesc> rowCells = loopRowDesc.getIvyCellDescs();
-        loopRowStyles = new ArrayList<HSSFCellStyle>(rowCells.size());
-        for (IvyCellDesc ivyCellDesc : rowCells) {
-            loopRowStyles.add(createCellStyle(ivyCellDesc));
-        }
+        System.out.println("ds=" + ds);
+        System.out.println("rowId=" + rowId);
+        this.loopRow = new XlsRowDesc(loopRowDesc, createCellStyles(loopRowDesc.getIvyCellDescs()));
         
         itemCount = datasource.size();
         curItemIndex = 0;
         
         datasource.addListener(this);
         datasource.next();
-        
-        multiHeadRow = null;
-        multiHeadRowStyles = null;
     }
     
     /**
@@ -412,7 +428,9 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
      * @param value
      */
     private void createCell(HSSFRow hssfRow, IvyCellDesc billCell, HSSFCellStyle cellStyle, String value) {
-        HSSFCell cell = hssfRow.createCell(billCell.getCellId());
+//        HSSFCell cell = hssfRow.createCell(billCell.getCellId());
+        
+        HSSFCell cell = hssfRow.createCell(2);
         
         value = value==null?billCell.getValue():value;
         cellStyle = cellStyle==null?createCellStyle(billCell):cellStyle;
@@ -437,7 +455,9 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
     //大于10W记录分文件
     //大于5W分页
     protected void checkLimit() {
-        if (curItemIndex % SHEET_MAX_ITEM_ROW*WORKBOOK_SHEET_NUM == 0 && curItemIndex < itemCount) {        
+        if (Config.isXls_split_file() &&
+                curItemIndex % Config.getXls_wb_max_sheet() * Config.getXls_sheet_max_item() == 0 && 
+                curItemIndex < itemCount) {        
             flush();
             
             createWorkbook();
@@ -445,26 +465,28 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
 //            addRow(headRow);
             
             rowId = 0;
-            if (multiHeadRow != null) {
-                for (int i=0; i<multiHeadRow.size(); i++) {
-                    IvyRowDesc headRowDesc = multiHeadRow.get(i);
-                    List<HSSFCellStyle> rowCellStyles = multiHeadRowStyles.get(i);
+            if (headRows != null) {
+                for (int i=0; i<headRows.size(); i++) {
+                    XlsRowDesc xlsRowDesc = headRows.get(i);
                     
                     HSSFRow hssfRow = sheet.createRow(rowId);
-                    hssfRow.setHeight((short)(headRowDesc.getHeight()*20));
-                    List<IvyCellDesc> headCellDescs = headRowDesc.getIvyCellDescs();
-                    if (headCellDescs != null && !headCellDescs.isEmpty()) {
-                        for (int j = 0; j < headCellDescs.size(); j++) {
-                            IvyCellDesc headCellDesc = headCellDescs.get(j);
-                            createCell(hssfRow, headCellDesc, rowCellStyles.get(j), null);
+                    hssfRow.setHeight((short)(xlsRowDesc.getIvyRowDesc().getHeight()*20));
+                    
+                    List<IvyCellDesc> ivyCellDescs = xlsRowDesc.getIvyRowDesc().getIvyCellDescs();
+                    List<HSSFCellStyle> hssfCellStyles = xlsRowDesc.getCellStyles();
+                    if (ivyCellDescs != null && !ivyCellDescs.isEmpty()) {
+                        for (int j = 0; j < ivyCellDescs.size(); j++) {
+                            IvyCellDesc headCellDesc = ivyCellDescs.get(j);
+                            createCell(hssfRow, headCellDesc, hssfCellStyles.get(j), null);
                         }
                         rowId ++;
                     }
                 }
             }
         //恰好记录完结，则不重新创建页
-        }else if (curItemIndex % SHEET_MAX_ITEM_ROW == 0 
-                && curItemIndex < itemCount) {        
+        }else if (Config.getXls_wb_max_sheet() > 1 &&
+                curItemIndex % Config.getXls_sheet_max_item() == 0 && 
+                curItemIndex < itemCount) {        
             createSheet();
             rowId = 0;
         }else {
@@ -505,44 +527,60 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
     }
     
     /**
-     * 创建样式
-     * @param billCell
+     * 批量创建样式
+     * @param ivyCellDescs
      * @return
      */
-    protected HSSFCellStyle createCellStyle(IvyCellDesc billCell) {
+    protected List<HSSFCellStyle> createCellStyles(List<IvyCellDesc> ivyCellDescs) {
+        if (ivyCellDescs == null || ivyCellDescs.size() == 0) {
+            return null;
+        }
+        List<HSSFCellStyle> result = new ArrayList<HSSFCellStyle>(ivyCellDescs.size());
+        for (IvyCellDesc ivyCellDesc : ivyCellDescs) {
+            result.add(createCellStyle(ivyCellDesc));
+        }
+        return result;
+    }
+    
+    /**
+     * 创建样式
+     * @param ivyCellDesc
+     * @return
+     */
+    protected HSSFCellStyle createCellStyle(IvyCellDesc ivyCellDesc) {
         HSSFCellStyle hssfCellStyle = workbook.createCellStyle();
         hssfCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
         hssfCellStyle.setFillForegroundColor(HSSFColor.WHITE.index);//前景填充色
         
         HSSFFont hssfFont = workbook.createFont();
-        if (billCell.isBold()) {
+        if (ivyCellDesc.isBold()) {
             hssfFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         }
-        hssfFont.setFontHeightInPoints((short)billCell.getSize());
+        hssfFont.setFontHeightInPoints((short)ivyCellDesc.getSize());
         hssfCellStyle.setFont(hssfFont);
         
-        hssfCellStyle.setAlignment((short)(billCell.getAlign()+1));
-        if (billCell.getValign() == Align.MIDDLE.getValue()) {
+        hssfCellStyle.setAlignment((short)(ivyCellDesc.getAlign()+1));
+        if (ivyCellDesc.getValign() == Align.MIDDLE.getValue()) {
             hssfCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-        } else if (billCell.getValign() == Align.TOP.getValue()) {
+        } else if (ivyCellDesc.getValign() == Align.TOP.getValue()) {
             hssfCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
         }
         
-        String bgColor = billCell.getBgColor();
+        String bgColor = ivyCellDesc.getBgColor();
         if (!StringUtils.isEmpty(bgColor) && !"#ffffff".equals(bgColor)) {
             HSSFColor hssfColor = createColor(bgColor);
             hssfCellStyle.setFillForegroundColor(hssfColor.getIndex());
         }
         
-        if (billCell.getDataType() == DataType.NUMBER &&
-                !StringUtils.isEmpty(billCell.getPattern())) {
-            hssfCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(billCell.getPattern()));
+        if (ivyCellDesc.getDataType() == DataType.NUMBER &&
+                !StringUtils.isEmpty(ivyCellDesc.getPattern())) {
+            hssfCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(ivyCellDesc.getPattern()));
         }
 
-        hssfCellStyle.setBorderLeft((short)billCell.getBorder());
-        hssfCellStyle.setBorderRight((short)billCell.getBorder());
-        hssfCellStyle.setBorderTop((short)billCell.getBorder());
-        hssfCellStyle.setBorderBottom((short)billCell.getBorder());
+        hssfCellStyle.setBorderLeft((short)ivyCellDesc.getBorder());
+        hssfCellStyle.setBorderRight((short)ivyCellDesc.getBorder());
+        hssfCellStyle.setBorderTop((short)ivyCellDesc.getBorder());
+        hssfCellStyle.setBorderBottom((short)ivyCellDesc.getBorder());
         
         hssfCellStyle.setWrapText(Boolean.TRUE);
         
@@ -554,11 +592,11 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
      * @param bgColor #ff0000
      * @return
      */
-    protected HSSFColor createColor(String bgColor) {
+    private HSSFColor createColor(String bgColor) {
         HSSFColor hssfColor = null;
         
-        if (colors.containsKey(bgColor)) {
-            hssfColor = colors.get(bgColor);                
+        if (xlsColorCache.containsKey(bgColor)) {
+            hssfColor = xlsColorCache.get(bgColor);                
         } else {
             HSSFPalette customPalette = workbook.getCustomPalette();  
             int r = Integer.valueOf(bgColor.substring( 1, 3 ), 16);
@@ -574,7 +612,7 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
                             (byte) g,
                             (byte) b);
                     hssfColor = customPalette.getColor(HSSFColor.LAVENDER.index);
-                    colors.put(bgColor, hssfColor);
+                    xlsColorCache.put(bgColor, hssfColor);
                 }
             } catch (Exception e) {
                 logger.error("", e);
@@ -585,56 +623,14 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
         return hssfColor;
     }
     
-    /*private static void test() {
-//        BillHead billHead = DataCreate.getBillHead();
-//        BillBottom billBottom = DataCreate.getBillBottom();
-        
-        List<File> xmlFiles = new ArrayList<File>();
-        xmlFiles.add(new File("E:/tmp/8888999904_2015-07-01_2015-07-31_order_V1_1.xml"));
-//        xmlFiles.add(new File("E:/tmp/order_ds_1.xml"));
-//        xmlFiles.add(new File("E:/tmp/order_ds_2.xml"));
-//        xmlFiles.add(new File("E:/tmp/order_ds_0.xml"));
-        
-        List<File> cxFiles = new ArrayList<File>();
-        cxFiles.add(new File("E:/tmp/EXPRESS_CP_REBATE_8888999904_2015-07-01_2015-07-31_1.xml"));
-        
-        BillSubTotal billSubTotal = new BillSubTotal();
-        billSubTotal.addSpecialRebate(120.1);
-        billSubTotal.setTotalDueAmt(11111111111111.11d);
-        
-        billSubTotal.setTotalRebateAmt(10d);
-        
-        BillParams billParams = new BillParams();
-//        billParams.put("billHead", billHead);
-//        billParams.put("billBottom", billBottom);
-        billParams.put("order", xmlFiles);
-        billParams.put("order_count", 310);
-        billParams.put(BillParams.PARAM_DS_CX, cxFiles);
-        billParams.put(BillParams.PARAM_DS_CX_COUNT, 2);
-        
-        
-        billParams.put("cpt", sdFiles);
-        billParams.put("cpt_count", 0);
-        billParams.put("output", "E:/cx.xls");
-        billParams.put(BillParams.PARAM_BILL_SUBTOTAL, billSubTotal);
-        
-        billParams.put(BillParams.PARAM_TMPL, "tmpl_xls_bill_standard");
-        
-        XlsBillWriter xlsBillWriter = new XlsBillWriter(billParams);
-        xlsBillWriter.create();
-    }*/
-    
-    public static void main(String[] args) {
-//        test();   
-    }
-
     /* (non-Javadoc)
      * @see com.ivy.freport.ds.IvyDSAccessListener#nextElement(java.lang.Object)
      */
     public abstract boolean nextElement(E t);
 
-    protected List<HSSFCellStyle> getLoopRowStyles() {
-        return loopRowStyles;
+    
+    public XlsRowDesc getLoopRow() {
+        return loopRow;
     }
 
     protected int getRowId() {

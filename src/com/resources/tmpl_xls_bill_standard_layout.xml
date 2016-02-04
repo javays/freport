@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="tmpl_xls_bill_standard">
+    
+    <table id="title">
+        <row>
+            <cell height="20" align="center" valign="middle" size="14" bold ="true">
+                <![CDATA[
+					客  户  月  结  清  单									
+                ]]>
+            </cell>
+        </row>
+        
+    </table>
+</layout>

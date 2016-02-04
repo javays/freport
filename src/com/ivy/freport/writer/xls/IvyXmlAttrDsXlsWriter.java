@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.xml.sax.Attributes;
 
@@ -15,7 +16,6 @@ import com.ivy.freport.ds.IvyDataSource;
 import com.ivy.freport.layout.DataType;
 import com.ivy.freport.layout.IvyCellDesc;
 import com.ivy.freport.layout.IvyDocDesc;
-import com.ivy.freport.utils.StringUtils;
 
 /**
  * 描述：
@@ -50,11 +50,15 @@ public class IvyXmlAttrDsXlsWriter extends IvyXlsWriter<Attributes> {
      */
     @Override
     public boolean nextElement(Attributes attributes) {
-        int height = loopRowDesc.getHeight();
-        List<IvyCellDesc> cellDescs = loopRowDesc.getIvyCellDescs();
+        int height = getLoopRow().getIvyRowDesc().getHeight();
+        List<IvyCellDesc> cellDescs = getLoopRow().getIvyRowDesc().getIvyCellDescs();
+        List<HSSFCellStyle> hssfCellStyles = getLoopRow().getCellStyles();
         
         HSSFRow hssfRow = sheet.createRow(getRowId());
         hssfRow.setHeight((short)(height*20));
+        
+        System.out.println("rowId=" + rowId);
+        System.out.println("curItemIndex=" + curItemIndex);
         
         for (int i = 0; i < cellDescs.size(); i++) {
             IvyCellDesc cellDesc = cellDescs.get(i);
@@ -63,7 +67,8 @@ public class IvyXmlAttrDsXlsWriter extends IvyXlsWriter<Attributes> {
             if (columnValue == null) columnValue = "";
             
             HSSFCell cell = hssfRow.createCell(cellDesc.getCellId());
-            cell.setCellStyle(getLoopRowStyles().get(i));
+            
+            cell.setCellStyle(hssfCellStyles.get(i));
             
             if (cellDesc.getDataType() == DataType.NUMBER 
                     && !"".equals(columnValue.trim())) {
