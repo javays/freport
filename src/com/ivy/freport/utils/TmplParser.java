@@ -34,7 +34,7 @@ public abstract class TmplParser {
     
     private final static Logger logger = Logger.getLogger(TmplParser.class);
     
-    public static final String PARAM_REGEX = "\\$F\\{\\s*(\\w+)\\s*(,\\s*dataType\\s*=\\s*(\\w+))?\\s*(,\\s*pattern\\s*=\\s*(\\w+))?\\}";
+    public static final String PARAM_REGEX = "\\$F\\{\\s*(\\w+(\\.\\w+)?)\\s*(,\\s*dataType\\s*=\\s*(\\w+))?\\s*(,\\s*pattern\\s*=\\s*(\\w+))?\\}";
     public static final Pattern PARAM_PATTERN = Pattern.compile(PARAM_REGEX);
     
     /**
@@ -183,7 +183,7 @@ public abstract class TmplParser {
     }
     
     public static void main(String[] args) {
-        String input = "fdsa$F{ pater, dataType =   number , pattern=12}fff";
+        String input = "fdsa$F{ pater.x, dataType =   number , pattern=12}fff";
         Matcher matcher = PARAM_PATTERN.matcher(input);
         System.out.println(matcher.find());
         System.out.println(matcher.group());
