@@ -158,10 +158,19 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
                         HSSFCellStyle cellStyle = workbook.createCellStyle();
                         cellStyle.cloneStyleFrom(hssfCellStyles.get(i));
                         hssfCellStyles.set(i, cellStyle);
-                        
                     }
                 }
-                
+            }
+        }
+        
+        if (loopRow != null) {
+            List<HSSFCellStyle> hssfCellStyles = loopRow.getCellStyles();
+            if (hssfCellStyles != null && hssfCellStyles.size() > 0) {
+                for (int i = 0; i < hssfCellStyles.size(); i++) {
+                    HSSFCellStyle cellStyle = workbook.createCellStyle();
+                    cellStyle.cloneStyleFrom(hssfCellStyles.get(i));
+                    hssfCellStyles.set(i, cellStyle);
+                }
             }
         }
     }
@@ -196,7 +205,7 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
         for (int j = 0; j < ivyCellDescs.size(); j++) {
             int k = ivyCellDescs.get(j).getWidth();
             if (k != 0) {
-                columnWidth[j] = k;
+                columnWidth[j] = k*256;
             }
         }
     }
@@ -409,8 +418,6 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
             return;
         }
         
-        System.out.println("ds=" + ds);
-        System.out.println("rowId=" + rowId);
         this.loopRow = new XlsRowDesc(loopRowDesc, createCellStyles(loopRowDesc.getIvyCellDescs()));
         
         itemCount = datasource.size();
@@ -428,9 +435,7 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
      * @param value
      */
     private void createCell(HSSFRow hssfRow, IvyCellDesc billCell, HSSFCellStyle cellStyle, String value) {
-//        HSSFCell cell = hssfRow.createCell(billCell.getCellId());
-        
-        HSSFCell cell = hssfRow.createCell(2);
+        HSSFCell cell = hssfRow.createCell(billCell.getCellId());
         
         value = value==null?billCell.getValue():value;
         cellStyle = cellStyle==null?createCellStyle(billCell):cellStyle;
@@ -456,7 +461,7 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
     //大于5W分页
     protected void checkLimit() {
         if (Config.isXls_split_file() &&
-                curItemIndex % Config.getXls_wb_max_sheet() * Config.getXls_sheet_max_item() == 0 && 
+                curItemIndex % (Config.getXls_wb_max_sheet() * Config.getXls_sheet_max_item()) == 0 && 
                 curItemIndex < itemCount) {        
             flush();
             

@@ -57,9 +57,6 @@ public class IvyXmlAttrDsXlsWriter extends IvyXlsWriter<Attributes> {
         HSSFRow hssfRow = sheet.createRow(getRowId());
         hssfRow.setHeight((short)(height*20));
         
-        System.out.println("rowId=" + rowId);
-        System.out.println("curItemIndex=" + curItemIndex);
-        
         for (int i = 0; i < cellDescs.size(); i++) {
             IvyCellDesc cellDesc = cellDescs.get(i);
             

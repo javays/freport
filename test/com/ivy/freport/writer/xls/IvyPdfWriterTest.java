@@ -37,26 +37,19 @@ import com.ivy.freport.writer.pdf.IvyXmlAttrDsPdfWriter;
  * @since
  */
 
-public class IvyXlsWriterTest {
+public class IvyPdfWriterTest {
 
     public static void test() {
-        long now = System.currentTimeMillis();
-        
         List<File> xmlFiles = new ArrayList<File>();
-//        xmlFiles.add(new File("E:/tmp/order_datasource1.xml"));
-        
-        xmlFiles.add(new File("E:/tmp/order_ds_0.xml"));
-        xmlFiles.add(new File("E:/tmp/order_ds_1.xml"));
-        
-        int itemNum = 200000;
+        xmlFiles.add(new File("E:/tmp/order_datasource1.xml"));
         
         List<String> skipElementsName = new ArrayList<String>();
         skipElementsName.add("items");
-        IvyDataSource<Attributes> dataSources = new IvyXmlDataSource(xmlFiles, itemNum, skipElementsName);
+        IvyDataSource<Attributes> dataSources = new IvyXmlDataSource(xmlFiles, 10, skipElementsName);
         
         List<File> cptFiles = new ArrayList<File>();
         cptFiles.add(new File("E:/tmp/cpts.xml"));
-        IvyDataSource<Attributes> cpDataSources = new IvyXmlDataSource(cptFiles, 10, skipElementsName);
+        IvyDataSource<Attributes> cpDataSources = new IvyXmlDataSource(xmlFiles, 10, skipElementsName);
         
         Map<String, IvyDataSource<Attributes>> ds = new HashMap<String, IvyDataSource<Attributes>>();
         ds.put("order", dataSources);
@@ -64,7 +57,7 @@ public class IvyXlsWriterTest {
         
         
         Map<String, IvyDocDesc> ivyDocDescs = IvyLayout.getInstance().docDescs;
-        IvyDocDesc ivyDocDesc = ivyDocDescs.get("tmpl_xls_bill_standard");
+        IvyDocDesc ivyDocDesc = ivyDocDescs.get("tmpl_pdf_bill_standard");
         
         BillHead billHead = DataCreate.getBillHead();
         BillBottom billBottom = DataCreate.getBillBottom();
@@ -75,18 +68,16 @@ public class IvyXlsWriterTest {
         
         Map<String, Object> otherAttrs = new HashMap<String, Object>();
         
-        otherAttrs.put("order_count", 100000);
+        otherAttrs.put("order_count", 5);
         otherAttrs.put("billHead", billHead);
         otherAttrs.put("billBottom", billBottom);
         otherAttrs.put("cpt_count", 5);   
         otherAttrs.put("billSubTotal", billSubTotal);
         
-        String output = "E:/SDBill.xls";
+        String output = "E:/SDBill.pdf";
         
-        IvyXmlAttrDsXlsWriter ivyXmlAttrDsXlsWriter = new IvyXmlAttrDsXlsWriter(ivyDocDesc, ds, otherAttrs, output);
-        ivyXmlAttrDsXlsWriter.create();
-        
-        System.out.println(System.currentTimeMillis() - now);
+        IvyXmlAttrDsPdfWriter ivyXmlAttrDsPdfWriter = new IvyXmlAttrDsPdfWriter(ivyDocDesc, ds, otherAttrs, output);
+        ivyXmlAttrDsPdfWriter.create();
     }
 
     public static void main(String[] args) {
