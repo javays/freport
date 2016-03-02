@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="tmpl_xls_bill_bbil_cod">
+    
+    <table id="title">
+        <row>
+			<cell width="10"/>
+			<cell width="14"/>
+			<cell width="20"/>
+			<cell width="14"/>
+			<cell width="22"/>
+			<cell width="14"/>
+			<cell width="14"/>
+			<cell width="14"/>
+			<cell width="14"/>
+        </row>
+        <row>
+            <cell height="20" align="center" valign="middle" size="18" bold ="true" colspan="8">
+                <![CDATA[
+					同城配送代收货款对账清单							
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell height="10"></cell>
+        </row>
+        <row>
+            <cell align="center" valign="middle" size="10" bold ="true" colspan="8" backgroundColor="#C0C0C0">
+                <![CDATA[
+					客户信息							
+                ]]>
+            </cell>
+        </row>
+	    
+	    <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					客户名称							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					结算账号							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					返款周期							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					T+N					
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					结算周期							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+						T			
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					 开户银行							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					顺手付账号/银行帐号								
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					客户地址							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					电子邮箱						
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+				       客户对账联系人的电子邮箱				
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					所属城市							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					电话						
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+				       客户对账联系人的电话（座机/手机）				
+                ]]>
+            </cell>
+        </row>
+		
+	    <row>
+            <cell></cell>
+        </row>
+        
+        <row>
+            <cell align="center" valign="middle" size="10" bold ="true" colspan="8" backgroundColor="#C0C0C0">
+                <![CDATA[
+					账单信息							
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					账单号							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					结算账期				
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					代收货款结算方式						
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+				       结算金额				
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+												
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					YYYYMMDD-YYYYMMDD			
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					全额						
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+                <![CDATA[
+				       0			
+                ]]>
+            </cell>
+        </row>
+        
+        <row>
+            <cell height="20"></cell>
+        </row>
+        
+        <row>
+            <cell align="center" valign="middle" size="10" bold ="true" colspan="8" backgroundColor="#C0C0C0">
+                <![CDATA[
+					账单明细信息							
+                ]]>
+            </cell>
+        </row>
+        <row name="head" show="order_count>0">
+            <cell value="序号" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="妥投日期" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="订单号码" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="所属城市" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="店铺名称" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="子账号" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="代收货款金额" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="备注" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+        </row>
+        
+        <row ds="order" show="order_count>0">
+            <cell value="no" border="1" align="center"/>
+            <cell value="monthDate" border="1" align="center"/>
+            <cell value="orderNo" border="1" align="center"/>
+            <cell value="waybillNo" border="1" align="center"/>
+            <cell value="oppArea" border="1" align="center"/>
+            <cell value="oppCompany" border="1" align="center"/>
+            <cell value="oppPhone" border="1" align="center"/>
+            <cell value="productCode" border="1" align="center"/>
+        </row>
+        
+        <row>
+            <cell height="20"></cell>
+        </row>
+        
+        <row>
+            <cell border="1" bold ="true" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+					费用合计：							
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+        </row>
+        
+        <row>
+            <cell height="20"></cell>
+        </row>
+        
+        <row>
+            <cell align="center" valign="middle" size="10" bold ="true" colspan="8" backgroundColor="#C0C0C0">
+                <![CDATA[
+					SF对账联系人信息							
+                ]]>
+            </cell>
+        </row>
+        <row show="order_count>0">
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+						 电话：						
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					电子邮箱：					
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+									
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10">
+                <![CDATA[
+					联系人：						
+                ]]>
+            </cell>
+            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+                <![CDATA[
+				      
+                ]]>
+            </cell>
+        </row>
+        
+        <row>
+            <cell height="20"></cell>
+        </row>
+        
+        <row maxline="5">
+            <cell valign="top" colspan="15" borderColor="#ffffff">
+                <![CDATA[
+如果客户对帐时间超过本对帐期时，则转入下一个期间付款，对帐完成N个工作日内付款；								
+如果是线下对账，在我司接收到纸质账单后N个工作日内付款；								
+								
+[ ]1、以上信息准确无误，特此确认。								
+[ ]2、以上信息有误，具体如下：								
+                ]]>
+            </cell>
+        </row>
+        
+    </table>
+</layout>

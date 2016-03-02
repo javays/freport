@@ -1,10 +1,14 @@
+package com.ivy.freport.writer.xls;
 /* 
  * Copyright (c) 2016, S.F. Express Inc. All rights reserved.
  */
 
-package com.ivy.freport.writer.xls;
+
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.Map;
 import org.xml.sax.Attributes;
 
 import com.ivy.freport.ds.IvyDataSource;
+import com.ivy.freport.ds.IvyDbDataSource;
 import com.ivy.freport.ds.IvyXmlDataSource;
 import com.ivy.freport.layout.IvyDocDesc;
 import com.ivy.freport.layout.IvyLayout;
@@ -37,34 +42,41 @@ import com.ivy.freport.writer.pdf.IvyXmlAttrDsPdfWriter;
  * @since
  */
 
-public class IvyXlsWriterTest {
+public class IvyXlsWriterDbDsTest {
+    
+    public static Connection getConnection() throws Exception {
+        Class.forName("com.mysql.jdbc.Driver");
+        return DriverManager.getConnection("jdbc:mysql://10.202.4.41:3310/ecbilec", "ecbilec", "ecbilec_Mari");
+    }
 
-    public static void test() {
+    public static void test() throws Exception {
         long now = System.currentTimeMillis();
         
-        List<File> xmlFiles = new ArrayList<File>();
-//        xmlFiles.add(new File("E:/tmp/order_datasource1.xml"));
+        Connection connection = getConnection();  //TODO
         
-//        xmlFiles.add(new File("E:/tmp/order_ds_0.xml"));
-//        xmlFiles.add(new File("E:/tmp/order_ds_1.xml"));
+        String orderSql = "select o.order_dt monthDate," +
+                                 " o.order_no orderNo," +
+                                 " o.waybill_no waybillNo," +
+                                 " o.quote_amt feeAmt" +
+                     " from tt_express_order o" +
+                    " where o.pay_dept_code = '571YE'" +
+                      " and o.cust_code = '8888999904'" +
+                      " and o.order_dt between '2015-06-01' and '2015-06-31'";
+//        String cptSql = "";
         
-        int itemNum = 200000;
+        int orderNum = 200000;
+        int cptNum = 10;
         
-        List<String> skipElementsName = new ArrayList<String>();
-        skipElementsName.add("items");
-        IvyDataSource<Attributes> dataSources = new IvyXmlDataSource(xmlFiles, itemNum, skipElementsName);
+        IvyDataSource<Map<String, Object>> orderDs = new IvyDbDataSource(connection, orderSql, orderNum);
+//        IvyDataSource<ResultSet> cptDs = new IvyDbDataSource(connection, cptSql, cptNum);
         
-        List<File> cptFiles = new ArrayList<File>();
-        cptFiles.add(new File("E:/tmp/cpts.xml"));
-        IvyDataSource<Attributes> cpDataSources = new IvyXmlDataSource(cptFiles, 10, skipElementsName);
-        
-        Map<String, IvyDataSource<Attributes>> ds = new HashMap<String, IvyDataSource<Attributes>>();
-        ds.put("order", dataSources);
-        ds.put("cpt", cpDataSources);
+        Map<String, IvyDataSource<Map<String, Object>>> ds = new HashMap<String, IvyDataSource<Map<String, Object>>>();
+        ds.put("order", orderDs);
+//        ds.put("cpt", cptDs);
         
         
         Map<String, IvyDocDesc> ivyDocDescs = IvyLayout.getInstance().docDescs;
-        IvyDocDesc ivyDocDesc = ivyDocDescs.get("tmpl_xls_bill_bbil_cod_service");
+        IvyDocDesc ivyDocDesc = ivyDocDescs.get("tmpl_xls_bill_standard");
         
         BillHead billHead = DataCreate.getBillHead();
         BillBottom billBottom = DataCreate.getBillBottom();
@@ -83,13 +95,13 @@ public class IvyXlsWriterTest {
         
         String output = "E:/SDBill.xls";
         
-        IvyXmlAttrDsXlsWriter ivyXmlAttrDsXlsWriter = new IvyXmlAttrDsXlsWriter(ivyDocDesc, ds, otherAttrs, output);
-        ivyXmlAttrDsXlsWriter.create();
+        IvyDbDsXlsWriter ivyDbDsXlsWriter = new IvyDbDsXlsWriter(ivyDocDesc, ds, otherAttrs, output);
+        ivyDbDsXlsWriter.create();
         
         System.out.println(System.currentTimeMillis() - now);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
          test();
     }
 }

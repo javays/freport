@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="tmpl_xls_bill_bbil_cod_service">
+    
+    <table id="title">
+        <row>
+			<cell width="10"/>
+			<cell width="14"/>
+			<cell width="20"/>
+			<cell width="14"/>
+			<cell width="22"/>
+			<cell width="14"/>
+			<cell width="14"/>
+			<cell width="14"/>
+			<cell width="14"/>
+        </row>
+        <row>
+            <cell height="20" align="center" valign="middle" size="18" bold ="true" colspan="8">
+                <![CDATA[
+					同城配送服务费对账清单							
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell height="10"></cell>
+        </row>
+        
+        <row maxline="6">
+	        <cell></cell>
+	        <cell></cell>
+			<cell colspan="2" hasParam="true" align="left">
+					<![CDATA[
+城        市：		
+客户名称：		
+结算账号：		
+		
+联  系  人：	商家对账联系人	
+联系电话：	商家对账联系人电话	
+					]]>
+			</cell>
+<!-- 			<cell></cell> -->
+			<cell colspan="3" hasParam="true">
+					<![CDATA[
+尊敬的（客户名称） 		
+        您好！		
+        感谢您使用我司的服务，以下是您YYYYMMDD-YYYYMMDD		
+的电子账单，金额为：1000.00		
+       您本期的最晚汇款日是: 年月日，请勿错过您的期限。		
+       本期应付金额为：1200.00		
+					]]>
+			</cell>
+		</row>
+        <row>
+            <cell height="10"></cell>
+        </row>
+        
+        <row>
+            <cell align="center" valign="middle" size="10" bold ="true" colspan="8" backgroundColor="#C0C0C0">
+                <![CDATA[
+					账单明细信息							
+                ]]>
+            </cell>
+        </row>
+        <row name="head" show="order_count>0">
+            <cell value="序号" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="妥投日期" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="订单号码" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="所属城市" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="店铺名称" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="子账号" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="费用类型" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="应付金额" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+        </row>
+        
+        <row ds="order" show="order_count>0">
+            <cell value="no" border="1" align="center"/>
+            <cell value="monthDate" border="1" align="center"/>
+            <cell value="orderNo" border="1" align="center"/>
+            <cell value="waybillNo" border="1" align="center"/>
+            <cell value="oppArea" border="1" align="center"/>
+            <cell value="oppCompany" border="1" align="center"/>
+            <cell value="oppPhone" border="1" align="center"/>
+            <cell value="productCode" border="1" align="center"/>
+        </row>
+        
+        <row>
+            <cell value="" border="1" colspan="6"/>
+            <cell value="合  计" border="1" size="10" align="center" bold="true" valign="middle"/>
+            <cell value="" border="1"/>
+        </row>
+        
+        <row>
+            <cell value="累计未付金额" border="1" align="center" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="200" border="1" align="center" bold="true" valign="middle" size="10"/>
+            <cell value="" border="1" align="center" bold="true" valign="middle" size="10"/>
+            <cell value="本期账单金额" border="1" align="center" bold="true" valign="middle" size="10"/>
+            <cell value="1,000.00" border="1" align="center" bold="true" valign="middle" size="10"/>
+            <cell value="本期应付金额" border="1" align="center" bold="true" valign="middle" size="10"/>
+            <cell value="1,200.00 " border="1" align="center" bold="true" valign="middle" size="10"/>
+        </row>
+        
+        <row>
+            <cell height="20"></cell>
+        </row>
+        
+        <row>
+            <cell value="温馨提示：" bold="true" valign="middle" size="10" colspan="8"/>
+        </row>
+        
+        <row maxline="4">
+            <cell valign="top" colspan="8" borderColor="#ffffff">
+                <![CDATA[
+◆若您的账单地址、电邮地址等联系方式发生变化，为确保您能准确无误的收到账单，请您务必提前与我司联系，及时更新您的信息。							
+◆为了您的资金安全，希望您在付款时优先选择顺手付转账、银行转账、电汇等非现金支付方式结算运费。							
+◆请保留好订单记录，以便核对账单。并请于每月协议承诺日前，支付上月服务费。							
+◆我公司相关资料如下：							
+                ]]>
+            </cell>
+        </row>
+        
+        <row>
+            <cell value="公司名称：" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+        
+        <row>
+            <cell value="开户银行：	" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+        <row>
+            <cell value="银行账号：	" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+        <row>
+            <cell value="SF联系人：" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+        <row>
+            <cell value="联系电话：" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+        <row>
+            <cell value="联系邮箱：" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+        <row>
+            <cell value="传真号码：" border="1" align="right" bold="true" valign="middle" size="10" colspan="2"/>
+            <cell value="" border="1" align="left" valign="middle" colspan="6" size="10"/>
+        </row>
+    </table>
+</layout>
