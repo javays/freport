@@ -45,11 +45,12 @@ public class IvyXmlAttrDsXlsWriter extends IvyXlsWriter<Attributes> {
         super(ivyDocDesc, dataSources, otherAttrs, output);
     }
 
-    /* (non-Javadoc)
-     * @see com.ivy.freport.writer.xls.IvyXlsWriter#nextElement(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * @see com.ivy.freport.ds.IvyDSAccessListener#nextElement(java.lang.Object, int)
      */
     @Override
-    public boolean nextElement(Attributes attributes) {
+    public boolean nextElement(Attributes attributes, int seq) {
         int height = getLoopRow().getIvyRowDesc().getHeight();
         List<IvyCellDesc> cellDescs = getLoopRow().getIvyRowDesc().getIvyCellDescs();
         List<HSSFCellStyle> hssfCellStyles = getLoopRow().getCellStyles();
@@ -60,8 +61,15 @@ public class IvyXmlAttrDsXlsWriter extends IvyXlsWriter<Attributes> {
         for (int i = 0; i < cellDescs.size(); i++) {
             IvyCellDesc cellDesc = cellDescs.get(i);
             
-            String columnValue = attributes.getValue(cellDesc.getValue());
-            if (columnValue == null) columnValue = "";
+            String columnValue = null;
+            
+            String fieldName = cellDesc.getValue();
+            if ("@no".equals(fieldName)) {
+                columnValue = String.valueOf(seq);
+            } else {
+                columnValue = attributes.getValue(fieldName);
+                if (columnValue == null) columnValue = "";
+            }
             
             HSSFCell cell = hssfRow.createCell(cellDesc.getCellId());
             
@@ -90,5 +98,4 @@ public class IvyXmlAttrDsXlsWriter extends IvyXlsWriter<Attributes> {
         
         return true;
     }
-
 }

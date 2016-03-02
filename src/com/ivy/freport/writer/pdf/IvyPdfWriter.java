@@ -316,9 +316,6 @@ public abstract class IvyPdfWriter<E> extends PdfPageEventHelper implements IvyD
         document.add(paragraph);
     }
     
-    public abstract boolean nextElement(E e);
-    
-    
     /**
      * 关闭文件
      */

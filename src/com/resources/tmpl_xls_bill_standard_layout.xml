@@ -92,7 +92,7 @@
             <cell value="备注" width="10" border="1" bold="true" size="10" align="center" valign="middle" height="25"/>
         </row>
         <row height="30" ds="order" show="order_count>0">
-            <cell value="no" border="1" align="center"/>
+            <cell value="@no" border="1" align="center"/>
             <cell value="monthDate" border="1" align="center"/>
             <cell value="orderNo" border="1" align="center"/>
             <cell value="waybillNo" border="1" align="center"/>

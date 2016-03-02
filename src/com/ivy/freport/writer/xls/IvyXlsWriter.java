@@ -628,12 +628,6 @@ public abstract class IvyXlsWriter<E> implements IvyDSAccessListener<E> {
         return hssfColor;
     }
     
-    /* (non-Javadoc)
-     * @see com.ivy.freport.ds.IvyDSAccessListener#nextElement(java.lang.Object)
-     */
-    public abstract boolean nextElement(E t);
-
-    
     public XlsRowDesc getLoopRow() {
         return loopRow;
     }

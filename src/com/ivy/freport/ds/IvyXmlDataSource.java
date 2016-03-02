@@ -56,6 +56,8 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
     
     private String curXmlFile;
     
+    private int counter;
+    
     /**
      * @param xmlFiles
      * @param skipElementsName
@@ -132,6 +134,7 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
                 return;
             }
             
+            counter ++;
             onNextItem(attributes);
             super.startElement(uri, localName, qName, attributes);
         }
@@ -204,7 +207,7 @@ public class IvyXmlDataSource implements IvyDataSource<Attributes> {
     public void onNextItem(Attributes attributes) {
         if (listeners != null) {
             for (IvyDSAccessListener<Attributes> ivyDSAccessListener : listeners) {
-                ivyDSAccessListener.nextElement(attributes);
+                ivyDSAccessListener.nextElement(attributes, counter);
             }
         }
     }

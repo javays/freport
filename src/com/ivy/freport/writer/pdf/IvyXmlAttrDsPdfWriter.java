@@ -54,11 +54,19 @@ public class IvyXmlAttrDsPdfWriter extends IvyPdfWriter<Attributes> {
      * @see com.ivy.freport.writer.xls.IvyDSAccessListener#nextElement(java.lang.Object)
      */
     @Override
-    public boolean nextElement(Attributes attributes) {
+    public boolean nextElement(Attributes attributes, int seq) {
         for (IvyCellDesc ivyCellDesc : ivyRowDesc.getIvyCellDescs()) {
             String cellName = ivyCellDesc.getValue();
             DataType cellType = ivyCellDesc.getDataType();
-            String cellValue = attributes.getValue(cellName);
+            
+            String cellValue = null;
+            if ("@no".equals(cellName)) {
+                cellValue = String.valueOf(seq);
+            } else {
+                cellValue = attributes.getValue(cellName);
+                if (cellValue == null) cellValue = "";
+            }
+            
             if (DataType.NUMBER == cellType 
                     && !StringUtils.isEmpty(cellValue) 
                     && cellValue.matches("\\d+(\\.\\d+)?")) {

@@ -69,7 +69,7 @@
             <cell value="备注" width="10" bold="false" size="9" align="center" valign="middle" height="25"/>
         </row>
         <row ds="order">
-            <cell value="no" size="9"/>
+            <cell value="@no" size="9"/>
             <cell value="monthDate" size="9"/>
             <cell value="orderNo" size="9"/>
             <cell value="waybillNo" size="9"/>

@@ -20,5 +20,5 @@ package com.ivy.freport.ds;
 
 public interface IvyDSAccessListener<T> {
 
-    public boolean nextElement(T t);
+    public boolean nextElement(T t, int seq);
 }

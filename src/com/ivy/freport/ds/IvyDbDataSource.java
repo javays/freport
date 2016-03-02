@@ -38,6 +38,8 @@ public class IvyDbDataSource implements IvyDataSource<Map<String, Object>> {
     private PreparedStatement pstmt;
     private ResultSet rs;
     
+    private int counter;
+    
     private List<IvyDSAccessListener<Map<String, Object>>> listeners;
     
     /**
@@ -130,6 +132,8 @@ public class IvyDbDataSource implements IvyDataSource<Map<String, Object>> {
                 for (String columnName : columns) {
                     row.put(columnName, rs.getObject(columnName));
                 }
+                
+                counter ++;
                 onNextItem(row);
             }
         } catch (SQLException e) {
@@ -157,7 +161,7 @@ public class IvyDbDataSource implements IvyDataSource<Map<String, Object>> {
     public void onNextItem(Map<String, Object> row) {
         if (listeners != null) {
             for (IvyDSAccessListener<Map<String, Object>> ivyDSAccessListener : listeners) {
-                ivyDSAccessListener.nextElement(row);
+                ivyDSAccessListener.nextElement(row, counter);
             }
         }
     }

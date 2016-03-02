@@ -45,10 +45,10 @@ public class IvyDbDsXlsWriter extends IvyXlsWriter<Map<String, Object>> {
     }
 
     /* (non-Javadoc)
-     * @see com.ivy.freport.writer.xls.IvyXlsWriter#nextElement(java.lang.Object)
+     * @see com.ivy.freport.ds.IvyDSAccessListener#nextElement(java.lang.Object, int)
      */
     @Override
-    public boolean nextElement(Map<String, Object> map) {
+    public boolean nextElement(Map<String, Object> map, int seq) {
         int height = getLoopRow().getIvyRowDesc().getHeight();
         List<IvyCellDesc> cellDescs = getLoopRow().getIvyRowDesc().getIvyCellDescs();
         List<HSSFCellStyle> hssfCellStyles = getLoopRow().getCellStyles();
@@ -59,12 +59,16 @@ public class IvyDbDsXlsWriter extends IvyXlsWriter<Map<String, Object>> {
         for (int i = 0; i < cellDescs.size(); i++) {
             IvyCellDesc cellDesc = cellDescs.get(i);
             
+            String columnValue = null;
             
-            Object obj_columnValue = map.get(cellDesc.getValue());
-            if (obj_columnValue == null) obj_columnValue = "";
-            
-            String columnValue = String.valueOf(obj_columnValue);
-            
+            String fieldName = cellDesc.getValue();
+            if ("@no".equals(fieldName)) {
+                columnValue = String.valueOf(seq);
+            } else {
+                Object obj_columnValue = map.get(cellDesc.getValue());
+                if (obj_columnValue == null) obj_columnValue = "";
+                columnValue = String.valueOf(obj_columnValue);
+            }
             
             HSSFCell cell = hssfRow.createCell(cellDesc.getCellId());
             
@@ -93,5 +97,4 @@ public class IvyDbDsXlsWriter extends IvyXlsWriter<Map<String, Object>> {
         
         return true;
     }
-
 }
