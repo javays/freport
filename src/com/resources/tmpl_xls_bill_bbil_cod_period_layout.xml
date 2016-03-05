@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="tmpl_xls_bill_bbil_cod_period">
+    
+    <table id="title">
+        <row show="order>0">
+			<cell width="10"/>
+			<cell width="18"/>
+			<cell width="30"/>
+			<cell width="14"/>
+			<cell width="14"/>
+			<cell width="18"/>
+			<cell width="18"/>
+        </row>
+        <row name="head">
+            <cell value="序号" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="结算账号" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="客户名称" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="账期开始" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="账期结束" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="金额" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+            <cell value="状态" width="10" border="1" size="10" align="center" valign="middle" height="25"/>
+        </row>
+        
+        <row ds="order" show="order_count>0">
+            <cell value="@no" border="1" align="center"/>
+            <cell value="shopCode" border="1" align="center"/>
+            <cell value="shopName" border="1" align="center"/>
+            <cell value="startDt" border="1" align="center"/>
+            <cell value="endDt" border="1" align="center"/>
+            <cell value="fee" border="1" align="center" dataType="number" pattern="0.0"/>
+            <cell value="status" border="1" align="center"/>
+        </row>
+        
+        <row>
+            <cell value="合  计" colspan="5" border="1" size="10" align="center" bold="true" valign="middle"/>
+            <cell value="$F{totalFee}" border="1" colspan="2" hasParam="true" dataType="number" pattern="0.0"/>
+        </row>
+    </table>
+</layout>

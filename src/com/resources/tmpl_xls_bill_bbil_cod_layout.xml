@@ -37,9 +37,9 @@
 					客户名称							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-									
+					$F{billHeader.shopName}			
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -47,9 +47,9 @@
 					结算账号							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+            <cell border="1" align="center" valign="middle" size="10" colspan="3" hasParam="true">
                 <![CDATA[
-									
+				   $F{billHeader.shopCode}			
                 ]]>
             </cell>
         </row>
@@ -59,9 +59,9 @@
 					返款周期							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-					T+N					
+					$F{billHeader.refundPeriod}				
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -69,9 +69,9 @@
 					结算周期							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+            <cell border="1" align="center" valign="middle" size="10" colspan="3" hasParam="true">
                 <![CDATA[
-						T			
+					$F{billHeader.shopAccountPeriod}					
                 ]]>
             </cell>
         </row>
@@ -81,9 +81,9 @@
 					 开户银行							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-									
+				   $F{billHeader.accountBranch}			
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -91,9 +91,9 @@
 					顺手付账号/银行帐号								
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+            <cell border="1" align="center" valign="middle" size="10" colspan="3" hasParam="true">
                 <![CDATA[
-									
+					$F{billHeader.shopAccount}				
                 ]]>
             </cell>
         </row>
@@ -103,9 +103,9 @@
 					客户地址							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-									
+					$F{billHeader.shopAddress}						
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -113,9 +113,9 @@
 					电子邮箱						
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+            <cell border="1" align="center" valign="middle" size="10" colspan="3" hasParam="true">
                 <![CDATA[
-				       客户对账联系人的电子邮箱				
+				   $F{billHeader.shopBillCheckEmail}					
                 ]]>
             </cell>
         </row>
@@ -125,9 +125,9 @@
 					所属城市							
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-									
+					$F{billHeader.belongCityCode}				
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -135,9 +135,9 @@
 					电话						
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+            <cell border="1" align="center" valign="middle" size="10" colspan="3" hasParam="true">
                 <![CDATA[
-				       客户对账联系人的电话（座机/手机）				
+				   $F{billHeader.shopBillCheckPhone}				
                 ]]>
             </cell>
         </row>
@@ -181,9 +181,9 @@
 												
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-					YYYYMMDD-YYYYMMDD			
+					$F{startDt}-$F{endDt}			
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -191,9 +191,9 @@
 					全额						
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="3">
+            <cell border="1" align="center" valign="middle" size="10" colspan="3" hasParam="true">
                 <![CDATA[
-				       0			
+				   $F{totalFee}
                 ]]>
             </cell>
         </row>
@@ -259,15 +259,15 @@
                 ]]>
             </cell>
         </row>
-        <row show="order_count>0">
+        <row>
             <cell border="1" align="center" valign="middle" size="10">
                 <![CDATA[
 						 电话：						
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-									
+					   $F{billHeader.sfLinkmanPhone}		
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -275,9 +275,9 @@
 					电子邮箱：					
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10">
+            <cell border="1" align="center" valign="middle" size="10" hasParam="true">
                 <![CDATA[
-									
+					$F{billHeader.sfLinkmanEmail}					
                 ]]>
             </cell>
             <cell border="1" align="center" valign="middle" size="10">
@@ -285,9 +285,9 @@
 					联系人：						
                 ]]>
             </cell>
-            <cell border="1" align="center" valign="middle" size="10" colspan="2">
+            <cell border="1" align="center" valign="middle" size="10" colspan="2" hasParam="true">
                 <![CDATA[
-				      
+				   $F{billHeader.sfLinkman}	
                 ]]>
             </cell>
         </row>
