@@ -221,14 +221,14 @@
         </row>
         
         <row ds="order" show="order_count>0">
-            <cell value="no" border="1" align="center"/>
-            <cell value="monthDate" border="1" align="center"/>
-            <cell value="orderNo" border="1" align="center"/>
-            <cell value="waybillNo" border="1" align="center"/>
-            <cell value="oppArea" border="1" align="center"/>
-            <cell value="oppCompany" border="1" align="center"/>
-            <cell value="oppPhone" border="1" align="center"/>
-            <cell value="productCode" border="1" align="center"/>
+            <cell value="@no" border="1" align="center"/>
+            <cell value="signed_date" border="1" align="center"/>
+            <cell value="shop_order_no" border="1" align="center"/>
+            <cell value="belong_city_code" border="1" align="center"/>
+            <cell value="shop_name" border="1" align="center"/>
+            <cell value="shop_code" border="1" align="center"/>
+            <cell value="fee" border="1" align="center" dataType="number" pattern="0.00"/>
+            <cell value="remark" border="1" align="center"/>
         </row>
         
         <row>

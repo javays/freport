@@ -4,7 +4,8 @@
 
 package com.ivy.freport.writer.xls;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -75,9 +76,11 @@ public class IvyEntityDsXlsWriter<T> extends IvyXlsWriter<T> {
                 if ("@no".equals(fieldName)) {
                     columnValue = String.valueOf(seq);
                 } else {
-                    Field field = clazz.getField(cellDesc.getValue());
-                    field.setAccessible(true);
-                    Object obj_columnValue = field.get(entity);
+                    Method method = clazz.getDeclaredMethod(
+                            "get" + Character.toUpperCase(fieldName.charAt(0))
+                                    + fieldName.substring(1),
+                            new Class<?>[0]);
+                    Object obj_columnValue = method.invoke(entity, new Object[0]);
                     
                     if (obj_columnValue == null) obj_columnValue = "";
                     columnValue = String.valueOf(obj_columnValue);
@@ -109,13 +112,16 @@ public class IvyEntityDsXlsWriter<T> extends IvyXlsWriter<T> {
             checkLimit();
             
             return true;
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchMethodException e) {
             logger.error(e);
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
             logger.error(e);
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            logger.error(e);
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             logger.error(e);
             e.printStackTrace();
         }
