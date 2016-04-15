@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout xmlns="http://www.freport.org/freport-layout" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.freport.org/freport-layout freport-layout.xsd"
+		name="tmpl_xls_bill_custom_horizontal">
+    
+    <table id="title">
+        <row>
+            <cell width="10"/>
+			<cell width="12"/>
+			<cell width="20"/>
+			<cell width="20"/>
+			<cell width="10"/>
+			<cell width="20"/>
+			<cell width="10"/>
+			<cell width="20"/>
+			<cell width="20"/>
+			<cell width="13"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="13"/>
+<!-- 			<cell width="10"/> -->
+<!-- 			<cell width="10"/> -->
+<!-- 			<cell width="10"/> -->
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="13"/>
+<!-- 			<cell width="10"/> -->
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="13"/>
+<!-- 			<cell width="10"/> -->
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="15"/>
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="13"/>
+			<cell width="13"/>   <!-- 特安服务 -->
+			<cell width="13"/>   <!-- 其它 -->
+			<cell width="13"/>   
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="15"/>
+			<cell width="15"/>
+			<cell width="20"/>
+			<cell width="10"/>
+			<cell width="15"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="15"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="20"/>
+			<cell width="10"/>
+			<cell width="13"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="15"/>
+			<cell width="15"/>
+			<cell width="15"/>
+			<cell width="20"/>
+			<cell width="10"/>
+			<cell width="10"/>
+			<cell width="20"/>
+			<cell width="15"/>
+			<cell width="20"/>
+			<cell width="12"/>
+			<cell width="20"/>
+        </row>
+        <row>
+            <cell height="20" align="center" valign="middle" size="14" bold ="true" colspan="9">
+                <![CDATA[
+					客  户  月  结  清  单									
+                ]]>
+            </cell>
+        </row>
+        <row>
+            <cell height="10"></cell>
+        </row>
+	    <row maxline="10">
+	        <cell></cell>
+			<cell colspan="5" hasParam="true" align="left">
+					<![CDATA[
+尊敬的 ($F{billHead.customerName}), 您好!
+      $F{billHead.billStart} 至 $F{billHead.billEnd} 账单已产生，非常感谢您选择我司为您提供的服务，感谢您与
+我司的真诚合作！本月发生的费用汇总说明如下（明细清单附后）：
+      结算期间：$F{billHead.billStart} 至 $F{billHead.billEnd}	
+      本期金额：$F{billSubTotal.s_totalDueAmtCurPriod}
+      上期未付金额：$F{billSubTotal.s_unpaidFee}
+      截止本月您累计应付金额：$F{billSubTotal.s_totalDueAmt}
+      请您在收到本月账单后及时核对，如有疑问请及时与我司对账联系人员联系，以尽快确认；
+如无异议，请及时确认账单并通知我司对账联系人员开票给您，并请您按我们合作协议约定
+的时间及时安排付款，以此作为我们双方诚信合作的基石。谢谢！
+					]]>
+			</cell>
+<!-- 			<cell></cell> -->
+			<cell colspan="5" hasParam="true" bold="true">
+					<![CDATA[
+客户名称： $F{billHead.customerName}
+                  $F{billHead.customerEnName}
+月结账号： $F{billHead.custCode}
+联  系  人： $F{billHead.contact}
+地       区： $F{billHead.deptCode}
+收  帐  员： $F{billHead.billingMembers}
+币       别： $F{billHead.currency}
+到  期  日： $F{billHead.dueDate}			
+					]]>
+			</cell>
+		</row>
+		
+	    <row>
+            <cell height="10"></cell>
+        </row>
+        <row height="25" show="order_count>0">
+            <cell colspan="6" hasParam="true">
+            		<![CDATA[
+附：$F{billHead.billStart} 至 $F{billHead.billEnd}费用明细清单		
+					]]>
+            </cell>
+        </row>
+        <row height="15" name="head" show="order_count>0">
+            <cell border="1" bold="true" rowspan="2" align="center" value="序号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="日期"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="订单号码"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="运单号码"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="寄件地区"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="寄件公司名称"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="对方地区"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="对方客户名称"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="对方公司名称"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="重量\n(公斤)"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="付款方式"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="产品名称"/>
+<!-- 			<cell border="1" bold="true" colspan="3" align="center" value="基础费用"/> -->
+			<cell border="1" bold="true" rowspan="2" align="center" value="应收费用"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="单票折扣"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="实收费用"/>
+			<cell border="1" bold="true" colspan="15" align="center" value="增值服务费"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="实收费用\n合计"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="订单类型"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="是否\n郊区件"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="订单来源"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="始发地\n(省名)"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="寄件人联系\n手机号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="寄件人联系\n座机号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="寄件地址"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="收件员\n工号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="客户网络\n代码"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="客户网络\n名称"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="客户发货\n仓库"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="托寄物名称"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="托寄物\n数量"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="声明价值"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="件数"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="轻抛尺寸\n(长X宽X高)"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="目的地\n(省名)"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="目的地\n城市名"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="客户\n区域代码"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="邮政编码"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="收件人"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="收件人联系\n手机号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="收件人联系\n座机号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="收件地址"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="派件员\n工号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="实际重量"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="回单单号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="退件名称"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="退回件关联原订单号"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="退件\n派件时间"/>
+			<cell border="1" bold="true" rowspan="2" align="center" value="备注"/>
+        </row>
+        <row height="15" name="head" show="order_count>0">
+<!--             <cell border="1" bold="true" align="center" value="费用（元）"/> -->
+<!-- 			<cell border="1" bold="true" align="center" value="单票折扣"/> -->
+<!-- 			<cell border="1" bold="true" align="center" value="应收费用"/> -->
+<!-- 			<cell border="1" bold="true" align="center" value="等通知派送"/> -->
+<!-- 			<cell border="1" bold="true" align="center" value="超范围转寄"/> -->
+<!-- 			<cell border="1" bold="true" align="center" value="偏远附件费"/> -->
+ 			<cell border="1" bold="true" align="center" value="签单返还"/>
+
+			<cell border="1" bold="true" align="center" value="电商加急"/>
+			<cell border="1" bold="true" align="center" value="节假日派送"/>
+			<cell border="1" bold="true" align="center" value="买卖宝"/>
+			<cell border="1" bold="true" align="center" value="保价"/>
+			<cell border="1" bold="true" align="center" value="定时派送"/>
+			<cell border="1" bold="true" align="center" value="保时达"/>
+			<cell border="1" bold="true" align="center" value="电子验收"/>
+			<cell border="1" bold="true" align="center" value="超长超重服务"/>
+			<cell border="1" bold="true" align="center" value="退货"/>
+			<cell border="1" bold="true" align="center" value="换货"/>
+			<cell border="1" bold="true" align="center" value="保鲜服务"/>
+			<cell border="1" bold="true" align="center" value="包装服务"/>
+			<cell border="1" bold="true" align="center" value="特安服务"/>
+			<cell border="1" bold="true" align="center" value="其它"/>
+       </row>
+       
+       <row height="30" ds="order" show="order_count>0">
+            <cell border="1" align="center" value="no"/>
+			<cell border="1" align="center" value="deliveredTm"/>
+			<cell border="1" align="center" value="orderNo"/>
+			<cell border="1" align="center" value="waybillNo"/>
+			<cell border="1" align="center" value="senderCityCode"/>
+			<cell border="1" align="center" value="senderCompany"/>
+			<cell border="1" align="center" value="destinationCityCode"/>
+			<cell border="1" align="center" value="receiveName"/>
+			<cell border="1" align="center" value="receiveCompany"/>
+			<cell border="1" align="center" value="weightQty" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="payType"/>
+			<cell border="1" align="center" value="productCode"/>
+			<cell border="1" align="center" value="feeAmtFreight" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeRebateFreight" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeDueFreight" dataType="number" pattern="0.00"/>
+			
+<!-- 			<cell border="1" align="center" value="feeNotify" dataType="number" pattern="0.00"/> -->
+<!-- 			<cell border="1" align="center" value="feeOutOfScope" dataType="number" pattern="0.00"/> -->
+<!-- 			<cell border="1" align="center" value="feeFaraway" dataType="number" pattern="0.00"/> -->
+ 			<cell border="1" align="center" value="feeSignReturn" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeUrgent" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeHoliday" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeBuySellInsurance" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeInsurance" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeSendOnTime" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeOnTimeInsurance" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeEAccept" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeLongHeavy" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeReturn" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeExchange" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeRefreshment" dataType="number" pattern="0.00"/>
+			
+			<cell border="1" align="center" value="feePacking" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="feeSpecialInsurance" dataType="number" pattern="0.00"/>
+			
+			<cell border="1" align="center" value="others" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="totalFee" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="orderType"/>
+			<cell border="1" align="center" value="suburbs"/>
+			<cell border="1" align="center" value="orderOrigin"/>
+			<cell border="1" align="center" value="senderProvince"/>
+			<cell border="1" align="center" value="senderPhone"/>
+			<cell border="1" align="center" value="senderTel"/>
+			<cell border="1" align="center" value="senderAddress"/>
+			<cell border="1" align="center" value="takeoverEmpCode"/>
+			<cell border="1" align="center" value="customerNetCode"/>
+			<cell border="1" align="center" value="customerNetName"/>
+			<cell border="1" align="center" value="customerWaresourse"/>
+			<cell border="1" align="center" value="consignName"/>
+			<cell border="1" align="center" value="consignQty" dataType="number" pattern="0"/>
+			<cell border="1" align="center" value="declaredValue" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="quantity" dataType="number" pattern="0"/>
+			<cell border="1" align="center" value="lightCastSize"/>
+			<cell border="1" align="center" value="destinationProvince"/>
+			<cell border="1" align="center" value="destinationCityCode"/>
+			<cell border="1" align="center" value="custAreaCode"/>
+			<cell border="1" align="center" value="destinationZipCode"/>
+			<cell border="1" align="center" value="receiveName"/>
+			<cell border="1" align="center" value="receivePhone"/>
+			<cell border="1" align="center" value="receiveTel"/>
+			<cell border="1" align="center" value="receiveAddress"/>
+			<cell border="1" align="center" value="deliveryEmpCode"/>
+			<cell border="1" align="center" value="realWeightQty" dataType="number" pattern="0.00"/>
+			<cell border="1" align="center" value="returnReceiptWaybillNo"/>
+			<cell border="1" align="center" value="returnPieceName"/>
+			<cell border="1" align="center" value="returnWaybillNo"/>
+			<cell border="1" align="center" value="returnSigningTm"/>
+			<cell border="1" align="center" value=""/>
+        </row>
+        
+        <row show="order_count>0">
+           <cell border="1" value="小计" align="center" colspan="12"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeAmtFreight}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeRebateFreight}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeDueFreight}" hasParam="true" dataType="number" pattern="0.00"/>
+<!--            <cell border="1" align="center" value="$F{billSubTotal.totalFeeNotify}" hasParam="true" dataType="number" pattern="0.00"/> -->
+<!--            <cell border="1" align="center" value="$F{billSubTotal.totalFeeOutOfScope}" hasParam="true" dataType="number" pattern="0.00"/> -->
+<!--            <cell border="1" align="center" value="$F{billSubTotal.totalFeeFaraway}" hasParam="true" dataType="number" pattern="0.00"/> -->
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeSignReturn}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeUrgent}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeHoliday}" hasParam="true" dataType="number" pattern="0.00"/>
+		   <cell border="1" align="center" value="$F{billSubTotal.totalFeeBuySellInsurance}" hasParam="true" dataType="number" pattern="0.00"/>
+		   <cell border="1" align="center" value="$F{billSubTotal.totalFeeInsurance}" hasParam="true" dataType="number" pattern="0.00"/>
+		   <cell border="1" align="center" value="$F{billSubTotal.totalFeeSendOnTime}" hasParam="true" dataType="number" pattern="0.00"/>           
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeOnTimeInsurance}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeEAccept}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeLongHeavy}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeReturn}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeExchange}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeRefreshment}" hasParam="true" dataType="number" pattern="0.00"/>
+           
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeePacking}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.totalFeeSpecialInsurance}" hasParam="true" dataType="number" pattern="0.00"/>
+           
+           <cell border="1" align="center" value="$F{billSubTotal.totalOthers}" hasParam="true" dataType="number" pattern="0.00"/>
+           <cell border="1" align="center" value="$F{billSubTotal.subTotalDueAmt}" hasParam="true" dataType="number" pattern="0.00"/>
+        </row>
+        
+        <row show="billSubTotal.specialRebate!=0">
+            <cell border="1" value="补充折扣" align="center" colspan="30"/>
+            <cell border="1" value="$F{billSubTotal.specialRebate}" hasParam="true" align="left" dataType="number" pattern="0.00"/>
+        </row>
+        
+        <row show="order_count>0">
+           <cell border="1" value="合计" align="center" colspan="30"/>
+           <cell border="1" value="$F{billSubTotal.totalDueAmtAfterSpecialRebate}" hasParam="true" align="left" dataType="number" pattern="0.00"/>
+        </row>
+        
+        <row show="order_count>0">
+            <cell height="10"></cell>
+        </row>
+        
+        <!-- 促销折扣子报表 -->
+        <row height="30" show="cx_count>0">
+            <cell border="1" bold="true" colspan="6" align="center" valign="middle" height="30"><![CDATA[
+促销活动优惠费用
+                ]]></cell>
+        </row>
+        <row height="30" show="cx_count>0">
+            <cell border="1" value="方案名称" colspan="2" height="25" width="7" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="优惠费用" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="备注" colspan="3" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+        </row>
+        <row height="30" ds="cx" show="cx_count>0">
+            <cell border="1" value="discountType" colspan="2"/>
+            <cell border="1" value="discountAmount" dataType="number" pattern="0.00"/>
+            <cell border="1" value="remark" colspan="3"/>
+        </row>
+        
+        <row show="cx_count>0">
+            <cell height="10"></cell>
+        </row>
+        
+        <row height="30" show="cpt_count>0">
+            <cell border="1" bold="true" colspan="8" align="center" valign="middle" height="30"><![CDATA[
+减免订单费用及抵扣月结费用
+                ]]></cell>
+        </row>
+        <row height="30" show="cpt_count>0">
+            <cell border="1" value="序号" height="25" width="7" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="抵减日" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="订单号码" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="运单号码" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="抵减费用" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="抵减增值\n服务费用" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="抵扣月结费用" height="25" width="13" bold="true" size="10" align="center" valign="middle"/>
+            <cell border="1" value="备注" height="25" width="10" bold="true" size="10" align="center" valign="middle"/>
+        </row>
+        <row height="30" ds="cpt" show="cpt_count>0">
+            <cell border="1" value="no" align="center"/>
+            <cell border="1" value="compensateDt" align="center"/>
+            <cell border="1" value="orderNo" align="center"/>
+            <cell border="1" value="waybillNo" align="center"/>
+            <cell border="1" value="offsetFreightAmt" align="center" dataType="number" pattern="0.00"/>
+            <cell border="1" value="offsetValueAddAmt" align="center" dataType="number" pattern="0.00"/>
+            <cell border="1" value="subtractMonthlyAmt" align="center" dataType="number" pattern="0.00"/>
+            <cell border="1" value=""/>
+        </row>
+        
+        <row show="cpt_count>0">
+            <cell border="1" colspan="4" value="小  计" align="center" width="37" height="20"/>
+            <cell border="1" value="$F{billSubTotal.totalOffsetFreightAmt}" width="10" height="20" hasParam="true" dataType="number" pattern="0.00"/>
+            <cell border="1" value="$F{billSubTotal.totalOffsetValueAddAmt}" width="10" height="20" hasParam="true" dataType="number" pattern="0.00"/>
+            <cell border="1" value="$F{billSubTotal.totalSubtractMonthlyAmt}" width="23" height="20" hasParam="true" dataType="number" pattern="0.00"/>
+            <cell border="1" value="" height="20" hasParam="true"/>
+        </row>
+        
+        <row show="cpt_count>0">
+            <cell border="1" colspan="4" value="减免抵扣合计" align="center" width="37" height="20"/>
+            <cell border="1" colspan="4" value="$F{billSubTotal.totalFeeFreight}" width="43" height="20" hasParam="true" dataType="number" pattern="0.00"/>
+        </row>
+        
+        <row show="cpt_count>0">
+            <cell height="10"></cell>
+        </row>
+    	
+    	<row>
+            <cell border="1" colspan="4" value="本月应付费用金额" height="15" align="center"/>
+            <cell border="1" colspan="2" value="$F{billSubTotal.totalDueAmtCurPriod}" height="15" hasParam="true" dataType="number" pattern="0.00"/>
+        </row>
+        <row>
+            <cell border="1" colspan="4" value="合  计" height="15" align="center"/>
+            <cell border="1" colspan="2" value="$F{billSubTotal.totalDueAmt}" height="15" hasParam="true" dataType="number" pattern="0.00"/>
+        </row>
+        
+        <row>
+            <cell height="10"></cell>
+        </row>
+        
+        <row maxline="4">
+            <cell valign="top" colspan="9" borderColor="#ffffff">
+                <![CDATA[
+温馨提示：																																					
+◆若您的账单地址、电邮地址等联系方式发生变化，为确保您能准确无误的收到账单，请您务必登陆我司MYSF，及时更新您的信息。																																								
+◆为了您的资金安全，希望您在付款时优先选择转账（网银、银行柜台等）、本票、支票、POS机刷卡等非现金支付方式结算费用。																																								
+◆我公司相关资料如下:																						
+                ]]>
+            </cell>
+        </row>
+        
+        <row maxline="7">
+            <cell align="right" colspan="2" size="9" height="70" bold="true" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+公司名称：																																					
+开户银行：																																					
+银行账号：																																					
+SF联系人：																																					
+联系电话：																																					
+联系邮箱：																																					
+传真号码：																																					
+                ]]>
+            </cell>
+            <cell colspan="3" size="9" height="70" bold="true" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+$F{billBottom.companyName}																																					
+$F{billBottom.bankName}																																					
+$F{billBottom.bankAccount}																																					
+$F{billBottom.linkMan}																																					
+$F{billBottom.telphone}																																					
+$F{billBottom.email}																																					
+$F{billBottom.faxNo}																																					
+                ]]>
+            </cell>
+            
+        </row> 
+    
+    	<row maxline="2">
+            <cell colspan="9" align="left" valign="top" size="9" height="30" hasParam="true" borderColor="#ffffff">
+                <![CDATA[
+◆请保留好订单资料，以便核对账单。																																								
+◆顺丰积分计划专为月结客户提供，登陆www.sf-express.com 或www.sf-jf.com指定兑换人，即可兑换心仪礼品。																																								
+                ]]>
+            </cell>
+            
+        </row>  
+    </table>
+</layout>

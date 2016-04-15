@@ -66,8 +66,7 @@ public class IvyLayout {
                 "META-INF/config/ecbil.bill/tmpl/tmpl_pdf_bill_sto_layout.xml",
                 "META-INF/config/ecbil.bill/tmpl/tmpl_xls_bill_standard_layout.xml"
                 };*/
-        String path = Thread.currentThread().getContextClassLoader().getResource("com/resources").getPath();
-        File tmplRoot = new File(path);
+        File tmplRoot = new File(Config.getTmpl_path());
         if (!tmplRoot.exists()) {
             throw new RuntimeException("bill layout tmpl path "+ BILL_LAYOUT_ROOT +" may moved away!!!");
         }

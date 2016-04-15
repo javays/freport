@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.freport.org/freport-layout" 
+		xmlns:tns="http://www.freport.org/freport-layout" 
+		elementFormDefault="qualified">
+		
+	<element name="layout">
+		<complexType>
+			<sequence>
+				<element name="table" minOccurs="1" maxOccurs="unbounded">
+					<complexType>
+						<sequence>
+							<element name="row" minOccurs="1" maxOccurs="unbounded">
+								<complexType>
+									<sequence>
+										<element name="cell" minOccurs="1" maxOccurs="unbounded">
+											<complexType mixed="true">
+												<attribute name="value" type="string"/>
+												<attribute name="dataType">
+													<simpleType>
+														<restriction base="string">
+															<pattern value="number|date"></pattern>
+														</restriction>
+													</simpleType>
+												</attribute>
+												<attribute name="pattern" type="string"/>
+												<attribute name="hasParam" type="boolean"/>
+									            <attribute name="width" type="positiveInteger"/>
+									            <attribute name="height" type="positiveInteger"/>
+									            <attribute name="rowspan" type="positiveInteger"/>
+									            <attribute name="colspan" type="positiveInteger"/>
+									            <attribute name="bold" type="boolean"/>
+									            <attribute name="border" type="positiveInteger"/>
+									            <attribute name="borderColor" type="string"/>
+									            <attribute name="backgroundColor" type="string"/>
+									            <attribute name="size" type="positiveInteger"/>
+									            <attribute name="align">
+													<simpleType>
+														<restriction base="string">
+															<pattern value="left|center|right"></pattern>
+														</restriction>
+													</simpleType>
+												</attribute>
+												<attribute name="valign">
+													<simpleType>
+														<restriction base="string">
+															<pattern value="top|middle|bottom"></pattern>
+														</restriction>
+													</simpleType>
+												</attribute>
+									            <attribute name="img" type="string"/>
+									            <attribute name="imgHeight" type="positiveInteger"/>
+									            <attribute name="imgWidth" type="positiveInteger"/>
+											</complexType>
+										</element>
+									</sequence>
+									<attribute name="name" type="string"/>
+									<attribute name="height" type="positiveInteger"/>
+			                        <attribute name="maxline" type="positiveInteger"/>
+			                        <attribute name="show" type="string"/>
+			                        <attribute name="ds" type="string"/>
+								</complexType>
+							</element>
+						</sequence>
+						
+						<attribute name="id" type="string"/>
+						<attribute name="width">
+							<simpleType>
+								<restriction base="string">
+									<pattern value="\d{1,3}%?"></pattern>
+								</restriction>
+							</simpleType>
+						</attribute>
+						<attribute name="align" type="string"/>
+						<attribute name="br" type="boolean"/>
+						<attribute name="show" type="string"/>
+					</complexType>
+				</element>
+			</sequence>
+			<attribute name="name" type="string"/>
+		</complexType>
+	</element>
+</schema>

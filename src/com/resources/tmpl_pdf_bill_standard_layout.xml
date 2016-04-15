@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layout name="tmpl_pdf_bill_standard">
+<layout xmlns="http://www.freport.org/freport-layout" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.freport.org/freport-layout freport-layout.xsd"
+		name="tmpl_pdf_bill_standard">
+		
 	<table id="title" width="100%">
     	<row>
             <cell size="14" borderColor="#ffffff" height="50" align="center">
